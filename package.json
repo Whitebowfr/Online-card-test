@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "A simple online card game to test server development",
   "main": "index.js",
+  "engine": {
+    "node": ">=0.12"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "keywords": [
     "poker",

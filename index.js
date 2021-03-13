@@ -16,10 +16,10 @@ wss.on('connection', function connection(ws, req) {
             if (data.connectedIP.indexOf(req.connection.remoteAddress) > -1) {
                 sendM("ID :" + data.correspondingID[data.connectedIP.indexOf(req.connection.remoteAddress)].toString())
             } else {
+                clientID = Math.round(Math.random() * 1000)
                 data.connectedIP.push(req.connection.remoteAddress.toString())
                 data.correspondingID.push(clientID)
                 sendM("ID : " + clientID)
-                clientID++
             }
             updateDatabase(data)
         }
