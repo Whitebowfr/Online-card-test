@@ -1,0 +1,26 @@
+{
+  "name": "online-card-game",
+  "version": "1.0.0",
+  "description": "A simple online card game to test server development",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "poker",
+    "card",
+    "game",
+    "online"
+  ],
+  "author": "me",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "mysql": "^2.18.1",
+    "sqlite3": "^5.0.2",
+    "ws": "^7.4.4"
+  }
+}

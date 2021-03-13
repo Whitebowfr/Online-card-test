@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>Saucisse</p>
+    <input type="button" onclick="send('TEs mort frer')" value="test">
+</body>
+<script>
+    send("newConnection")
+    const socket = new WebSocket('ws://localhost:8080');
+    var myID
+
+    function messageHandler(mes) {
+        if (mes.toString().includes("ID")) {
+            myID = Number(mes.toString().split(":")[1])
+        }
+    }
+
+    socket.addEventListener('message', function (event) {
+        messageHandler(event.data);
+        console.log(event.data);
+    });
+
+
+    function send(mes) {
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.addEventListener('open', function (event) {
+            socket.send(mes);
+        });
+
+        socket.addEventListener('message', function (event) {
+            messageHandler(event.data);
+            console.log(event.data);
+        });
+    }
+
+</script>
+</html>
