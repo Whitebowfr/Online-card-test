@@ -16,15 +16,9 @@
     var el;
 
     ws.onmessage = function (event) {
+        messageHandler(event.data)
         console.log(event.data)
-        ws.send("Saucisse")
     };
-
-    /*
-
-    send("newConnection")
-    const socket = new WebSocket('ws://test-ws-card.herokuapp.com');
-    var myID
 
     function messageHandler(mes) {
         if (mes.toString().includes("ID")) {
@@ -32,24 +26,9 @@
         }
     }
 
-    socket.addEventListener('message', function (event) {
-        messageHandler(event.data);
-        console.log(event.data);
-    });
-
-
     function send(mes) {
-        const socket = new WebSocket('ws://localhost:8080');
-
-        socket.addEventListener('open', function (event) {
-            socket.send(mes);
-        });
-
-        socket.addEventListener('message', function (event) {
-            messageHandler(event.data);
-            console.log(event.data);
-        });
-    }*/
+        ws.send(mes)
+    }
 
 </script>
 </html>
