@@ -1,11 +1,36 @@
-const WebSocket = require('ws');
 const fs = require('fs');
+const express = require("express")
 
-const wss = new WebSocket.Server({ port: process.env.PORT || 8080 });
+const PORT = process.env.PORT || 8080;
+const INDEX = 'main.html';
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`))
+
+const { Server } = require('ws');
+const wss = new Server({ server });
+
 var clientID = 0
-var data = readDatabase()
+//var data = readDatabase()
 
-wss.on('connection', function connection(ws, req) {
+wss.on('connection', (ws) => {
+    console.log('Client connected');
+    ws.on('close', () => console.log('Client disconnected'));
+    ws.onmessage = function(evt) {
+        console.log(evt.data)
+    }
+  });
+
+
+
+  setInterval(() => {
+    wss.clients.forEach((client) => {
+      client.send(new Date().toTimeString());
+    });
+  }, 1000);
+
+/*wss.on('connection', function connection(ws, req) {
     var isMessage = false
  
     ws.on('message', function incoming(message) {
@@ -46,4 +71,4 @@ function readDatabase() {
 
 function updateDatabase(dataToWrite) {
     fs.writeFileSync("database.json", JSON.stringify(dataToWrite))
-}
+}*/
