@@ -3,20 +3,26 @@
         "::1"
     ],
     "correspondingID": [
-        738
+        289
     ],
     "usr": [
         {
             "id": "E",
-            "bank": 144
+            "bank": 144,
+            "hand": [],
+            "bet": 0
         },
         {
             "id": "A",
-            "bank": 1
+            "bank": 1,
+            "hand": [],
+            "bet": 0
         },
         {
-            "id": 738,
-            "bank": 1000
+            "id": 289,
+            "bank": 10000000,
+            "hand": [],
+            "bet": 0
         }
     ]
 }
