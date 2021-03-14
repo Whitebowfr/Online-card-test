@@ -157,6 +157,7 @@ function drawCard(ID) {
     for (var i = 0; i < data.usr.length; i++) {
         if (data.usr[i].id == ID) {
             data.usr[i].hand.push(carte.card)
+            console.log(data.usr[i].hand[data.usr[i].hand.length - 1])
         }
     }
     updateDatabase(data)
