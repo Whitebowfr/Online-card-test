@@ -20,23 +20,36 @@ wss.on('connection', (ws, req) => {
         ws.send(message);
     }
 
+    function getAdressIp(customReq) {
+        return customReq.headers['x-forwarded-for'] || customReq.connection.remoteAddress
+    }
+
     sendM("You're connected")
 
-    console.log(data.connectedIP, data.connectedIP.toString().indexOf( req.headers['x-forwarded-for'] || req.connection.remoteAddress.toString()))
-    if (data.connectedIP.indexOf(req.headers['x-forwarded-for'] || req.connection.remoteAddress) > -1) {
-        sendM("ID :" + data.correspondingID[data.connectedIP.indexOf( req.headers['x-forwarded-for'] || req.connection.remoteAddress)].toString())
+    console.log(data.connectedIP, data.connectedIP.toString().indexOf(getAdressIp(req)))
+    if (data.connectedIP.indexOf(getAdressIp(req)) > -1) {
+        sendM("ID :" + data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
     } else {
         clientID = Math.round(Math.random() * 1000)
-        data.connectedIP.push(req.headers['x-forwarded-for'] || req.connection.remoteAddress.toString())
+        data.connectedIP.push(getAdressIp(req))
         data.correspondingID.push(clientID)
         sendM("ID : " + clientID)
+        var clientData = {
+            "id": clientID,
+            "bank": 1000
+        }
+        data.usr.push(clientData)
     }
+
     updateDatabase(data)
     
-    ws.on('close', () => console.log('Client disconnected'));
+    ws.onclose = function (evt) {
+        console.log("client disconnected")
+        var disconnectedID = data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]
+    }
 
     ws.onmessage = function(evt) { 
-        console.log('received: %s', evt.data, " from ", req.headers['x-forwarded-for'] || req.socket.remoteAddress);
+        console.log('received: %s', evt.data, " from ", getAdressIp(req));
 
         
         if (evt.data.toString().includes("__")) {
@@ -48,6 +61,12 @@ wss.on('connection', (ws, req) => {
     }
 });
 
+setInterval(() => {
+    wss.clients.forEach((client) => {
+      client.send("skip__" + new Date().toTimeString());
+    });
+}, 5000);
+
 function yeet() {
     console.log("YEEET")
 }
@@ -57,5 +76,5 @@ function readDatabase() {
 }
 
 function updateDatabase(dataToWrite) {
-    fs.writeFileSync("database.json", JSON.stringify(dataToWrite))
+    fs.writeFileSync("database.json", JSON.stringify(dataToWrite, null, 4))
 }

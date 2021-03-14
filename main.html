@@ -17,12 +17,15 @@
 
     ws.onmessage = function (event) {
         messageHandler(event.data)
-        console.log(event.data)
     };
 
     function messageHandler(mes) {
         if (mes.toString().includes("ID")) {
             myID = Number(mes.toString().split(":")[1])
+        }
+        if (mes.includes("skip__")) {return false}
+        else {
+            console.log(mes)
         }
     }
 
