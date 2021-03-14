@@ -7,7 +7,9 @@
         599,
         313
     ],
-    "isReady": [],
+    "isReady": [
+        599
+    ],
     "waitingForGame": [
         599
     ],

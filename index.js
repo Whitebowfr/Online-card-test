@@ -51,16 +51,13 @@ wss.on('connection', (ws, req) => {
                 data.usr[i].name = name
             }
         }
-        //var waitingBankAccounts = []
         for (id in data.waitingForGame) {
             for (var i = 0; i < data.usr.length; i++) {
                 if (data.usr[i].id == data.waitingForGame[id]) {
                     waitingNames.push(data.usr[i].name)
-                    //waitingBankAccounts.push(data.usr[i].bank)
                 }
             }
         }
-        //sendM("info__playersInQueueBank:" + JSON.stringify(waitingBankAccounts))
         updatePlayersInLobby(waitingNames)
         updateDatabase(data)
     }
@@ -68,20 +65,24 @@ wss.on('connection', (ws, req) => {
     function isReady(ID, state) {
         var data = readDatabase()
         if (state) {
-            data.isReady.push(ID)
-            clientsReady++
-        } else {
-            var index = data.isReady.indexOf(Number(ID))
-            data.isReady.splice(index, 1)
-            clientsReady--
+            data.isReady.push(Number(ID))
         }
+        if (!state) {
+            var indexBis = data.isReady.indexOf(Number(ID))
+            if (indexBis > -1) {
+                data.isReady.splice(indexBis, 1)
+            }
+        }
+        var clientsReady = data.isReady.length
         updateDatabase(data)
         sendGlobal("info__ClientsReady:" + clientsReady)
-        console.log(clientsReady)
+        if (clientsReady == data.waitingForGame.length && clientsReady >= 1) {
+            startGame()
+        }
     }
 
     function updatePlayersInLobby(names) {
-        sendGlobal("info__playersInQueue:" + JSON.stringify(waitingNames))
+        sendGlobal("info__playersInQueue:" + JSON.stringify(names))
     }
 
     sendM("You're connected")
@@ -117,6 +118,7 @@ wss.on('connection', (ws, req) => {
         var data = readDatabase()
         var disconnectedID = data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString()
         var index = data.waitingForGame.indexOf(Number(disconnectedID))
+
         if (index > -1) {
             data.waitingForGame.splice(index, 1)
             waitingNames.splice(index, 1)
@@ -126,9 +128,16 @@ wss.on('connection', (ws, req) => {
             resetGame()
         }
 
+        var indexBis = data.isReady.indexOf(Number(disconnectedID))
+
+        if (indexBis > -1) {
+            data.isReady.splice(indexBis, 1)
+        }
+
+        console.log("ID", Number(data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]))
+
         updateDatabase(data)
         updatePlayersInLobby(waitingNames)
-        clientsReady--
     }
 
     ws.onmessage = function(evt) { 
@@ -258,6 +267,24 @@ function resetGame() {
     }
     deck = new Deck()
     updateDatabase(data)
+}
+
+function startGame() {
+    console.log("Game started")
+    resetGame();
+    data = readDatabase()
+    var playingPlayers = []
+    console.log("players waiting :", data.waitingForGame)
+    for (player in data.waitingForGame) {
+        for (var i = 0; i < data.usr.length; i++) {
+            console.log(data.usr[i])
+            if (data.usr[i].id == data.waitingForGame[player]) {
+                playingPlayers.push(data.usr[i])
+            }
+        }
+    }
+    console.log("playing players : ",playingPlayers)
+    
 }
 
 function bet(ID, amount) {
