@@ -39,6 +39,8 @@ wss.on('connection', (ws, req) => {
         }
     }
 
+    var waitingNames = []
+
     function connectToGame(name, ID) {
         var data = readDatabase()
         if (data.waitingForGame.indexOf(ID) == -1) {
@@ -49,7 +51,6 @@ wss.on('connection', (ws, req) => {
                 data.usr[i].name = name
             }
         }
-        var waitingNames = []
         //var waitingBankAccounts = []
         for (id in data.waitingForGame) {
             for (var i = 0; i < data.usr.length; i++) {
@@ -61,6 +62,7 @@ wss.on('connection', (ws, req) => {
         }
         sendM("info__playersInQueue:" + JSON.stringify(waitingNames))
         //sendM("info__playersInQueueBank:" + JSON.stringify(waitingBankAccounts))
+        updatePlayersInLobby(waitingNames)
         updateDatabase(data)
     }
 
@@ -72,6 +74,10 @@ wss.on('connection', (ws, req) => {
         }
         sendGlobal("info__ClientsReady:" + clientsReady)
         console.log(clientsReady)
+    }
+
+    function updatePlayersInLobby(names) {
+        sendGlobal("info__playersInQueue:" + JSON.stringify(waitingNames))
     }
 
     sendM("You're connected")
@@ -115,6 +121,7 @@ wss.on('connection', (ws, req) => {
             resetGame()
         }
         updateDatabase(data)
+        updatePlayersInLobby(waitingNames)
         clientsReady--
     }
 
