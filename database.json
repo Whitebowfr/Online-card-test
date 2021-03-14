@@ -1,17 +1,25 @@
 {
     "connectedIP": [
-        "::1",
-        "193.250.96.210"
+        "::1"
     ],
     "correspondingID": [
-        289,
-        69420
+        599
     ],
-    "waitingForGame": [],
+    "waitingForGame": [
+        599
+    ],
     "usr": [
         {
             "id": 69420,
+            "name": "",
             "bank": 1000000000,
+            "hand": [],
+            "bet": 0
+        },
+        {
+            "id": 599,
+            "name": "Yeet69421d",
+            "bank": 1000,
             "hand": [],
             "bet": 0
         }

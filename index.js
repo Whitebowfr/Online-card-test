@@ -13,9 +13,10 @@ const wss = new Server({ server });
 
 var clientID = 0
 var data = readDatabase()
+var clientsReady = 0
 data.waitingForGame = []
 updateDatabase(data)
-const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards"]
+const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady"]
 
 
 wss.on('connection', (ws, req) => {
@@ -38,27 +39,66 @@ wss.on('connection', (ws, req) => {
         }
     }
 
+    function connectToGame(name, ID) {
+        var data = readDatabase()
+        if (data.waitingForGame.indexOf(ID) == -1) {
+            data.waitingForGame.push(ID)
+        }
+        for (var i = 0; i < data.usr.length; i++) {
+            if (data.usr[i].id == ID) {
+                data.usr[i].name = name
+            }
+        }
+        var waitingNames = []
+        //var waitingBankAccounts = []
+        for (id in data.waitingForGame) {
+            for (var i = 0; i < data.usr.length; i++) {
+                if (data.usr[i].id == data.waitingForGame[id]) {
+                    waitingNames.push(data.usr[i].name)
+                    //waitingBankAccounts.push(data.usr[i].bank)
+                }
+            }
+        }
+        sendM("info__playersInQueue:" + JSON.stringify(waitingNames))
+        //sendM("info__playersInQueueBank:" + JSON.stringify(waitingBankAccounts))
+        updateDatabase(data)
+    }
+
+    function isReady(ID, state) {
+        if (state) {
+            clientsReady++
+        } else {
+            clientsReady--
+        }
+        sendGlobal("info__ClientsReady:" + clientsReady)
+        console.log(clientsReady)
+    }
+
     sendM("You're connected")
 
     console.log(data.connectedIP, data.connectedIP.toString().indexOf(getAdressIp(req)))
     if (data.connectedIP.indexOf(getAdressIp(req)) > -1) {
-        sendM("ID :" + data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
-        data.waitingForGame.push(data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
+        sendM("skip__ID :" + data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
+        for (var i = 0; i < data.usr.length; i++) {
+            if (data.usr[i].id == data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]) {
+                var name = data.usr[i].name
+            }
+        }
+        sendM("info__yourName:" + name)
     } else {
         clientID = Math.round(Math.random() * 1000)
         data.connectedIP.push(getAdressIp(req))
         data.correspondingID.push(clientID)
-        sendM("ID : " + clientID)
+        sendM("skip__ID : " + clientID)
         var clientData = {
             "id": clientID,
+            "name": "",
             "bank": 1000,
             "hand": [],
             "bet": 0
         }
         data.usr.push(clientData)
-        data.waitingForGame.push(clientID)
     }
-    sendM("You are waiting in game with : " + JSON.stringify(data.waitingForGame).replace("[", "").replace("]", ""))
 
     updateDatabase(data)
     
@@ -68,9 +108,11 @@ wss.on('connection', (ws, req) => {
         var disconnectedID = data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString()
         
         var index = data.waitingForGame.indexOf(disconnectedID)
-        console.log(index)
         if (index > -1) {
             data.waitingForGame.splice(index, 1)
+        }
+        if (data.waitingForGame.length == 0) {
+            resetGame()
         }
         updateDatabase(data)
     }
@@ -92,13 +134,17 @@ wss.on('connection', (ws, req) => {
 });
 
 setInterval(() => {
-    wss.clients.forEach((client) => {
-      client.send("skip__" + new Date().toTimeString());
-    });
-}, 5000);
+    sendGlobal("skip__" + new Date().toTimeString())
+}, 10000);
 
 function readDatabase() {
     return JSON.parse(fs.readFileSync("database.json"))
+}
+
+function sendGlobal(mes) {
+    wss.clients.forEach((client) => {
+        client.send(mes)
+    })
 }
 
 function updateDatabase(dataToWrite) {

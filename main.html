@@ -4,16 +4,491 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+        @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200,900');
+
+        html {
+            height: 100%;
+        }
+
+        @keyframes bgcolor {
+            0% {
+                background-color: #45a3e5
+            }
+
+            30% {
+                background-color: #66bf39
+            }
+
+            60% {
+                background-color: #eb670f
+            }
+
+            90% {
+                background-color: #f35
+            }
+
+            100% {
+                background-color: #864cbf
+            }
+        }
+
+        body {
+            -webkit-animation: bgcolor 40s infinite;
+            animation: bgcolor 20s infinite;
+            -webkit-animation-direction: alternate;
+            animation-direction: alternate;
+            font-family: 'Exo', sans-serif;
+            overflow: hidden;
+        }
+
+        #connectionLobby {
+            margin-top: 50vh;
+            transform: translateY(-100%);
+            height: auto;
+            width: 75%;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #mainLobbyMenu {
+            max-width: 20%;
+        }
+
+        area{
+            width: 100%;
+            height:100%;
+            overflow: hidden;
+        }
+
+        .circles{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .circles li{
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+            
+        }
+
+        .circles li:nth-child(1){
+            left: 25%;
+            width: 80px;
+            height: 80px;
+            animation-delay: 0s;
+        }
+
+
+        .circles li:nth-child(2){
+            left: 10%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .circles li:nth-child(3){
+            left: 70%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 4s;
+        }
+
+        .circles li:nth-child(4){
+            left: 40%;
+            width: 60px;
+            height: 60px;
+            animation-delay: 0s;
+            animation-duration: 18s;
+        }
+
+        .circles li:nth-child(5){
+            left: 65%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 0s;
+        }
+
+        .circles li:nth-child(6){
+            left: 75%;
+            width: 110px;
+            height: 110px;
+            animation-delay: 3s;
+        }
+
+        .circles li:nth-child(7){
+            left: 35%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 7s;
+        }
+
+        .circles li:nth-child(8){
+            left: 50%;
+            width: 25px;
+            height: 25px;
+            animation-delay: 15s;
+            animation-duration: 45s;
+        }
+
+        .circles li:nth-child(9){
+            left: 20%;
+            width: 15px;
+            height: 15px;
+            animation-delay: 2s;
+            animation-duration: 35s;
+        }
+
+        .circles li:nth-child(10){
+            left: 85%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 0s;
+            animation-duration: 11s;
+        }
+
+        @keyframes animate {
+
+            0%{
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+                border-radius: 0;
+            }
+
+            100%{
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+                border-radius: 50%;
+            }
+
+        }
+
+        .form-control {
+            position: relative;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .form-control input {
+            border: 0;
+            border-bottom: 2px solid #333;
+            padding-top: 15px;
+            padding-bottom: 5px;
+            display: block;
+            font-size: 18px;
+            font-family: 'Muli', sans-serif;
+            width: 100%;
+            transition: 0.1s ease-in;
+        }
+
+        .form-control input:focus, 
+        .form-control input:valid {
+            border-bottom-color: black;
+            outline: none;
+        }
+
+        .form-control input:focus + label span ,
+        .form-control input:valid + label span{
+            color: rgb(67, 67, 67);
+            transform: translateY(-30px);
+        }
+
+        .form-control label {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            user-select: none;
+        }
+
+        .form-control label span {
+            display: inline-block;
+            font-size: 18px;
+            min-width: 5px;
+            transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .container {
+            width: 70px;
+            height: 70px;
+            position: relative;
+            left: 50%;
+            top: 50px;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center {
+            width: 180px;
+            height: 60px;
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .btn {
+            width: 180px;
+            height: 60px;
+            cursor: pointer;
+            -webkit-animation: bgcolor 40s infinite;
+            animation: bgcolor 20s infinite;
+            -webkit-animation-direction: alternate;
+            animation-direction: alternate;
+            border: 1px solid #4d4d4d;
+            outline: none;
+            transition: 1s ease-in-out;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        svg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            fill: none;
+            stroke: #fff;
+            stroke-dasharray: 150 480;
+            stroke-dashoffset: 150;
+            transition: 1s ease-in-out;
+        }
+
+        .btn:hover {
+            transition: 1s ease-in-out;
+            z-index: 9 !important;
+        }
+
+        .btn:hover svg {
+            stroke-dashoffset: -480;
+        }
+
+        .btn span {
+            color: black;
+            font-size: 18px;
+            font-weight: 100;
+            z-index: 2;
+            user-select: none;
+        }
+
+        .preGameCards {
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-top: 45vh;
+            transform: translateY(-70%);
+            height: 50vh;
+            text-align: left;
+        }
+
+        .mainMenus {
+            margin-right: auto;
+            margin-left: auto;
+            background-color: white;
+            border-radius: 15px 15px 15px 15px;
+            padding: 10px;
+            padding-bottom: 20px;
+        }
+
+        #preGameLobby {
+            margin-right: auto;
+            width: 50%;
+            margin-left: auto;
+        }
+
+        .preGameLobbyNames {
+            margin-left: 20px;
+        }
+
+        .toggle{
+            --uiToggleSize: var(--toggleSize, 1.25rem);
+            --uiToggleBorderWidth: var(--toggleBorderWidth, 2px);
+            --uiToggleColor: var(--toggleColor, rgb(32, 114, 0));
+            display: var(--toggleDisplay, inline-flex);
+            position: relative;
+        }
+
+        .toggle__input{
+            width: var(--uiToggleSize);
+            height: var(--uiToggleSize);
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+        }
+
+        .toggle__label{
+            display: inline-flex;
+            min-height: var(--uiToggleSize);
+            padding-left: calc(var(--uiToggleSize) + var(--toggleIndent, .4em));
+        }
+
+        .toggle__input:not(:disabled) ~ .toggle__label{
+            cursor: pointer;
+        }
+
+        .toggle__label::after{
+            content: "";
+            box-sizing: border-box;  
+            width: 1em;
+            height: 1em;
+            font-size: var(--uiToggleSize);
+            background-color: transparent;
+            border: var(--uiToggleBorderWidth) solid var(--uiToggleColor);
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+
+        .toggle__input:checked ~ .toggle__label::after{
+            background-color: var(--uiToggleColor);
+        }
+
+        .toggle__text{
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .toggle__label::before{
+            content: "";
+            width: 0;
+            height: 0;
+            font-size: var(--uiToggleSize);
+            border-left-width: 0;
+            border-bottom-width: 0;
+            border-left-style: solid;
+            border-bottom-style: solid;
+            border-color: var(--toggleArrowColor, #fff);
+            position: absolute;
+            top: .5428em;
+            left: .25em;
+            z-index: 3;
+            transform-origin: left top;
+            transform: rotate(-40deg) skew(10deg);
+        }
+
+        .toggle__input:checked ~ .toggle__label::before{
+            --uiToggleArrowWidth: var(--toggleArrowWidth, 2px);
+            width: .4em;
+            height: .2em;
+            border-left-width: var(--uiToggleArrowWidth);
+            border-bottom-width: var(--uiToggleArrowWidth);
+        }
+
+        .toggle:focus-within{
+            outline: var(--toggleOutlineWidthFocus, 3px) solid var(--toggleOutlineColorFocus, currentColor);
+            outline-offset: var(--toggleOutlineOffsetFocus, 5px);
+        }
+
+        .toggle__input:disabled ~ .toggle__label{
+            opacity: var(--toggleOpacityDisabled, .24);
+            cursor: var(--toggleCursorDisabled, not-allowed);
+            user-select: none;
+        }
+
+        .toggle__label::after{
+            border-radius: var(--toggleBorderRadius, 2px);
+        }
+
+        .toggle__input:not(:disabled) ~ .toggle__label::before{
+            will-change: width, height;
+            opacity: 0;
+        }
+
+        .toggle__input:not(:disabled):checked ~ .toggle__label::before{
+            opacity: 1;
+            transition: opacity .1s ease-out .25s, width .001s ease-out .5s, height .002s ease-out .3s;
+        }
+
+        .toggle__input:not(:disabled) ~ .toggle__label::after{
+            will-change: background-color;
+            transition: background-color .2s ease-out;
+        }
+
+    </style>
 </head>
 <body>
-    <p>Saucisse</p>
-    <input type="button" onclick="send('TEs mort frer')" value="test">
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div id="connectionLobby" style="display: block;">
+        <h2>Bienvenue dans le lobby !</h2>
+        <div id="mainLobbyMenu" class="mainMenus">
+            <div class="form-control">
+                <input type="text" required id="customName"/>
+                <label style="font-family: 'Exo', sans-serif;">Pseudo</label>
+            </div>
+            <div class="container">
+                <div class="center">
+                    <button class="btn" onclick="connect()">
+                        <svg width="180px" height="60px" viewBox="0 0 180 60" class="border">
+                            <polyline points="179,1 179,59 1,59 1,1 179,1" class="bg-line" />
+                            <polyline points="179,1 179,59 1,59 1,1 179,1" class="hl-line" />
+                        </svg>
+                        <span style="font-family: 'Exo', sans-serif;">Rejoindre</span>
+                    </button>
+                </div>
+            </div>               
+        </div>
+        
+    </div>
+    <div id="preGameLobby" style="display: none; text-align: center;">
+        <h1 style="font-size: 3.5rem;">En attente de démarrage</h1>
+        <div class="page__toggle">
+            <label class="toggle">
+              <input class="toggle__input" type="checkbox" onchange='send("f__isReady(" + myID + "," + this.checked + ")__" + myID)'>
+              <span class="toggle__label">
+                <span class="toggle__text">Prêt !</span>
+              </span>
+            </label>
+          </div>
+        <div id="preGameLobbyMenu" class="mainMenus preGameCards" style="margin-top: 40vh;">
+        </div>
+    </div>
 </body>
 <script>
+    const inputs = document.querySelectorAll('.form-control input');
+    const labels = document.querySelectorAll('.form-control label');
+    var status = "none"
+
+    labels.forEach(label => {
+        label.innerHTML = label.innerText
+            .split('')
+            .map((letter, idx) => `<span style="
+                    transition-delay: ${idx * 50}ms
+                ">${letter}</span>`)
+            .join('');
+    });
+
     var HOST = location.origin.replace(/^http/, 'ws')
     var ws = new WebSocket(HOST);
     var el;
+    var myID
 
     ws.onmessage = function (event) {
         messageHandler(event.data)
@@ -25,16 +500,72 @@
         }
         if (mes.includes("skip__")) {
             return false
-        } if (mes.includes("ID")) {
-            return false
-        }
-        else {
+        } else {
             console.log(mes)
         }
+        if (mes.includes("info__")) {
+            var infoName = mes.split("__")[1].split(":")[0]
+            var infoValue = mes.split("__")[1].split(":")[1]
+            if (infoName == "yourName") {
+                document.getElementById("customName").value = infoValue
+            } if (infoName == "playersInQueue") {
+                showPreGameLobby(JSON.parse(infoValue))
+            } if (infoName == "ClientsReady") {
+                updatePreGameLobby(infoValue)
+            }
+        }
+    }
+
+    function showPreGameLobby(connected) {
+        $("#connectionLobby").hide();
+        $("#preGameLobby").show();
+        for (pseudo in connected) {
+            var card = document.createElement("h1")
+            card.className = "preGameLobbyNames"
+            card.innerText = "- " + connected[pseudo]
+            document.getElementById("preGameLobbyMenu").append(card)
+        }
+        var status = document.createElement("h1")
+        status.innerText = "0 / " + connected.length
+        status = "pre-game lobby"
+    }
+
+    function updatePreGameLobby(number) {
+
     }
 
     function send(mes) {
         ws.send(mes)
+    }
+
+    function connect() {
+        send("f__connectToGame(" + '"' + (document.getElementById("customName").value || generateName()) + '"' + "," + myID + ")__" + myID)
+        status = "connecting"
+    }
+
+    function replaceAt(string, index, replace) {
+        return string.substring(0, index) + replace + string.substring(index + 1);
+    }
+
+    function capFirst(string) {
+        if (string.charAt(0) == " ") {
+            string = replaceAt(string, 0, "")
+        }
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    function generateName(){
+        var name1 = ["abandonné", "capable", "absolu", "adorable", "aventureux", "académique", "acceptable", "acclamé", "accompli", "précis", "douloureux", "acide", "acrobatique", "actif", "actuel", "adepte", "admirable", "admiré", "adolescent", "adorable", "adoré", "avancé", "effrayé", "affectueux", "âgé", "aggravant", "agressif", "agile", "agité", "agonisant", "agréable", "ajar", "alarmé", "alarmant", "alerte", "aliéné", "vivant", "tout", "altruiste", "étonnant", "ambitieux", "ample", "amusé", "amusant", "ancré", "ancien", "angélique", "en colère", "angoissé", "animé", "annuel", "autre", "antique", "anxieux", "tout", "appréhensif", "approprié", "apte", "arctique", "aride", "aromatique", "artistique", "honteux", "assuré", "étonnant", "sportif", "attaché", "attentif", "attrayant", "austère", "authentique", "autorisé", "automatique", "avare", "moyen", "conscient", "génial", "affreux", "maladroit", "enfantin", "mauvais", "arrière", "baggy", "nu", "stérile", "basique", "beau", "tardif", "bien-aimé", "bénéfique", "meilleur", "meilleur", "ensorcelé", "grand", "grand cœur", "biodégradable", "petit", "amer", "noir", "noir et blanc", "fade", "blanc", "criard", "blême", "aveugle", "béat", "blond", "bleu", "rougissant", "faux", "bouillant", "audacieux", "osseux", "ennuyeux", "autoritaire", "à la fois", "bondissant", "généreux", "courbé", "courageux", "cassant", "bref", "vif", "brillant", "vif", "cassé", "bronze", "brun", "meurtri", "bouillonnant", "volumineux", "bosselé", "flottant", "lourd", "bourru", "affairé", "beurré", "bourdonnant", "calculateur", "calme", "candide", "canin", "capital", "insouciant", "prudent", "négligent", "attentionné", "prudent", "caverneux", "célébré", "charmant", "bon marché", "joyeux", "cheery", "chief", "chilly", "chubby", "circular", "classic", "clean", "clear", "clear-cut", "clever", "close", "closed", "cloudy", "clueless", "clumsy", "cluttered", "coarse", "cold", "coloré", "incolore", "colossal", "confortable", "commun", "compatissant", "compétent", "complet", "complexe", "compliqué", "composé", "concerné", "concret", "confus", "conscient", "attentionné", "constant", "contenu", "conventionnel", "cuit", "cool", "coopératif", "coordonné", "ringard", "corrompu", "coûteux", "courageux", "courtois", "rusé", "fou", "crémeux", "créatif", "effrayant", "criminel", "croustillant", "critique", "tordu", "encombré", "cruel", "écrasant", "câlin", "cultivé", "cultivé", "encombrant", "frisé", "curvy", "mignon", "cylindrique", "endommagé", "humide", "dangereux", "pimpant", "audacieux", "chéri", "sombre", "éblouissant", "mort", "mortel", "assourdissant", "cher", "très cher", "décent", "décimal", "décisif", "profond", "sans défense", "défensif", "défiant", "déficient", "défini", "définitif", "retardé", "délectable", "délicieux", "charmant", "délirant", "exigeant", "dense", "dentaire", "fiable", "dépendant", "descriptif", "déserté", "détaillé", "déterminé", "dévoué", "différent", "difficile", "numérique", "diligent", "dim", "dimpled", "dimwitted", "direct", "disastrous", "discrete", "disfigured", "disgusting", "disloyal", "dismal", "distant", "downright", "dreary", "dirty", "disguised", "dishonest", "lugubre", "distant", "distinct", "déformé", "étourdi", "abruti", "douillet", "double", "carrément", "terne", "brouillon", "dramatique", "lugubre", "goutteux", "sec", "double", "terne", "dévoué", "chacun", "désireux", "sérieux", "précoce", "facile", "facile à vivre", "extatique", "comestible", "éduqué", "élaboré", "élastique", "exalté", "âgé", "électrique", "élégant", "élémentaire", "elliptique", "embarrassé", "embelli", "éminent", "émotionnel", "vide", "enchanté", "enchanteur", "énergique", "éclairé", "énorme", "enragé", "entier", "envieux", "égal", "équatorial", "essentiel", "estimé", "éthique", "euphorique", "même", "evergreen", "everlasting", "every", "evil", "exalté", "excellent", "exemplaire", "exhausted", "excitable", "excitant", "excitant", "exotique", "cher", "expérimenté", "expert", "étranger", "extraverti", "extra-large", "extra-petit", "fabuleux", "défaillant", "faible", "équitable", "fidèle", "faux", "familier", "célèbre", "fantaisie", "fantastique", "loin", "lointain", "lointain", "lointain", "rapide", "gros", "fatal", "paternel", "favorable", "favori","fearful", "fearless", "feisty", "feline", "female", "feminine", "few", "fickle", "filthy", "fine", "finished", "firm", "first", "firsthand", "fitting", "fixed", "flaky", "flamboyant", "flashy", "flat", "flawed", "flawless", "flickering", "flimsy", "flippant", "flowery", "fluffy", "fluid", "flustered", "focused", "fond", "foolhardy", "foolish", "forceful", "forked", "formal", "forsaken", "forthright", "fortunate", "fragrant", "frail", "frank", "frayed", "free", "French", "fresh", "fréquent", "amical", "effrayé", "effrayant", "frigide", "frisé", "frisé", "frivole", "avant", "givré", "gelé", "frugal", "fructueux", "plein", "tâtonnant", "fonctionnel", "drôle", "pointilleux", "flou", "gargantuesque", "gazeux", "général", "généreux", "doux", "authentique", "géant", "étourdi", "gigantesque", "doué", "généreux", "glamour", "éclatant", "verre", "rutilant", "gai", "étincelant", "scintillant", "sombre", "glorieux", "brillant", "sombre", "doré", "bon", "bon vivant", "superbe", "gracieux", "gracieux", "grand", "grandiose", "granuleux", "reconnaissant", "grave", "gris", "grand", "gourmand", "vert", "grégaire", "sinistre", "grimaçant", "saisissant", "grizzlé", "grossier", "grotesque", "grognon", "fondé", "croissant", "grognon", "grandi", "épouvantable", "grognon", "coupable", "crédule", "gommeux", "poilu", "moitié", "fait main", "beau", "à portée de main", "heureux", "joyeux luron", "dur", "difficile à trouver", "nuisible", "inoffensif", "harmonieux", "dur", "hâtif", "haineux", "obsédant", "sain", "sincère", "cordial", "céleste", "lourd", "lourd", "utile", "impuissant", "caché", "hideux", "haut", "haut niveau", "hilarant", "rauque", "creux", "familial", "honnête", "honorable", "honoré", "plein d'espoir", "horrible", "hospitable", "hot", "huge", "humble", "humiliating", "humming", "humongous", "hungry", "hurtful", "husky", "icky", "icy", "ideal", "idealistic", "identical", "idle", "idiotic", "idolized", "ignorant", "ill", "illegal", "ill-fated", "ill-informed", "illettré", "illustre", "imaginaire", "imaginatif", "immaculé", "immatériel", "immédiat", "immense", "passionné", "impeccable", "impartial", "imparfait", "imperturbable", "impoli", "impolitique", "important", "impossible", "impraticable", "impressionnable", "impressionnant", "improbable", "impur", "inné", "incomparable", "incompatible", "incomplet", "inconséquent", "incroyable", "indélébile", "inexpérimenté", "indolent", "infâme", "infantile", "infatué", "inférieur", "infini", "informel", "innocent", "peu sûr", "insidieux", "insignifiant", "insistant", "instructif", "insubstantiel", "intelligent", "intention", "intentionnel", "intéressant", "interne", "international", "intrépide", "blindé", "irresponsable", "irritant", "démangeant", "blasé", "dentelé", "bourré", "jovial", "jaloux", "nerveux", "conjoint", "jovial", "jovial", "joyeux", "jubilatoire", "judicieux", "juteux", "jumbo", "junior", "sautillant", "juvénile", "kaléidoscopique", "vif", "clé", "gentil", "gentil cœur", "gentil", "klutzy", "knobby", "knotty", "knowledgeable", "knowing", "known", "kooky", "kosher", "lame", "lanky", "large", "last", "lasting", "late", "lavish", "lawful", "lazy", "leading", "lean", "leafy", "left", "legal", "légitime", "léger", "léger", "sympathique", "probable", "limité", "boiteux", "boiteux", "linéaire", "aligné", "liquide", "petit", "vivant", "vif", "livide", "détestable", "seul", "solitaire", "long", "long terme", "lâche", "de travers", "perdu", "fort", "adorable", "charmant", "aimant", "bas", "loyal", "chanceux", "lourdaud", "lumineux", "bosselé", "lustré", "luxueux", "fou", "maquillé", "magnifique", "majestueux", "majeur", "mâle", "mammouth", "marié", "merveilleux", "masculin", "massif", "mature", "maigre", "farineux", "méchant", "mesquin", "charnu", "médical", "médiocre", "moyen", "doux", "mélodique", "mémorable", "menaçant", "joyeux", "désordonné", "métallique", "doux", "laiteux", "insouciant", "miniature", "mineur", "minable", "avare", "égaré", "brumeux", "mixte", "moderne", "modeste", "humide", "monstrueux", "mensuel", "monumental", "moral", "mortifié", "maternel", "immobile", "montagneux", "boueux", "étouffé", "multicolore", "banal", "trouble", "pâteux", "moisi", "sourd", "mystérieux", "naïf", "étroit", "méchant", "naturel", "coquin", "nautique", "proche", "soigné", "nécessaire", "besogneux", "négatif", "négligé", "négligeable", "voisin", "nerveux", "nouveau", "prochain", "gentil", "agile", "mordant", "nocturne", "bruyant", "non-stop", "normal", "notable", "noté", "remarquable", "nouveau", "nocif", "engourdi", "nutritif", "noisette", "obéissant", "obèse", "oblong", "huileux", "oblong", "évident", "occasionnel", "bizarre", "décalé", "offensif", "officiel", "vieux", "démodé", "seulement", "ouvert", "optimal", "optimiste", "opulent", "orange", "ordonné", "organique", "orné", "ornerie", "ordinaire", "original", "autre", "notre", "excentrique", "sortant", "outlandish", "outrageux", "exceptionnel", "ovale", "trop cuit", "tardif", "trop heureux", "négligé", "appétissant", "pâle", "dérisoire", "parallèle", "desséché", "partiel", "passionné", "passé", "pastel", "paisible", "poivré", "parfait", "parfumé", "périodique", "guilleret", "personnel", "pertinent", "pesant", "pessimiste", "mesquin", "bidon", "physique", "perçant", "rose", "pitoyable", "simple", "plaintif", "plastique", "ludique", "plaisant", "heureux", "agréable", "dodu", "pelucheux", "poli", "politique", "pointu", "pointless", "poised", "poor", "popular", "portly", "posh", "positive", "possible", "potable", "powerful", "powerless", "practical", "precious", "present", "prestigious", "pretty", "precious", "previous", "pricey", "prickly", "primary", "prime", "pristine", "private", "prize", "probable", "productive", "profitable", "profuse", "proper", "fier", "prudent", "ponctuel", "piquant", "chétif", "pur", "violet", "poussif", "putride", "perplexe", "déroutant", "pittoresque", "qualifié", "querelleur", "trimestriel", "nauséeux", "querelleur", "douteux", "rapide", "vif d'esprit", "tranquille", "quintessentiel", "excentrique", "quichottesque", "quizzique", "radieux", "dépareillé", "rapide", "rare", "éruptif", "brut", "récent", "téméraire", "rectangulaire", "prêt", "réel", "réaliste", "raisonnable", "rouge", "réfléchissant", "royal", "régulier", "fiable", "soulagé", "remarquable", "remords", "distant", "repentant", "requis", "respectueux", "responsable", "repoussant", "tournant", "gratifiant", "riche", "rigide", "droit", "annelé", "mûr", "rôti", "robuste", "rosé", "tournant", "pourri", "rugueux", "rond", "tapageur", "royal", "caoutchouteux", "délabré", "rude", "grossier", "coulant", "rural", "rouillé", "triste", "sûr", "salé", "pareil", "sablonneux", "sain d'esprit", "sarcastique", "sardonique", "satisfait", "écailleux", "rare", "apeuré", "effrayant", "parfumé", "savant", "scientifique", "méprisant", "rayé", "maigre", "second", "secondaire", "d'occasion", "secret", "sûr de soi", "autonome", "égoïste", "sentimental", "séparé", "serein", "sérieux", "serpentin", "plusieurs", "sévère", "minable", "ombrageux", "peu profond", "honteux", "sans honte", "vif", "chatoyant", "brillant", "choqué", "choquant", "minable", "court", "court terme", "voyant", "criard", "timide", "malade", "silencieux", "soyeux", "idiot", "argenté", "similaire", "simple", "simpliste", "pécheur", "unique", "grésillant", "squelettique", "maigre", "endormi", "léger", "mince", "glissant", "lent", "slushy", "petit", "intelligent", "smoggy", "lisse", "suffisant", "snappy", "snarling", "sneaky", "sniveling", "snoopy", "sociable", "mou", "détrempé", "solide", "sombre", "certain", "sphérique", "sophistiqué", "douloureux", "chagrin", "soulful", "soupy", "sour", "espagnol", "pétillant", "clairsemé", "spécifique", "spectaculaire", "rapide", "épicé", "spiffy", "fougueux", "malveillant", "splendide", "impeccable", "tacheté", "spry", "carré", "grinçant", "ondoyant", "stable", "staid", "taché", "rassis", "standard", "amidonné", "austère", "étoilé", "abrupt", "collant", "raide", "stimulant", "avare", "orageux", "droit", "étrange", "acier", "strict", "strident", "frappant", "rayé", "fort", "studieux", "stupéfiant", "stupide", "robuste", "élégant", "subjugué", "soumis", "substantiel", "subtil", "suburbain", "soudain", "sucré", "ensoleillé", "super", "superbe", "superficiel", "supérieur", "solidaire", "sûr de soi", "surpris", "suspicieux", "svelte", "transpirant", "doux", "étouffant", "rapide", "sympathique", "grand", "bavard", "apprivoisé", "bronzé", "tangible", "acidulé", "savoureux", "en lambeaux", "tendu", "fastidieux", "foisonnant", "tentant", "tendre", "tendu", "tiède", "terrible", "formidable", "testy", "thankful", "that", "these", "thick", "thin", "third", "thirsty", "this", "thorough", "thorny", "those", "thoughtful", "threadbare", "économe", "tonitruant", "rangé", "serré", "opportun", "teinté", "minuscule", "fatigué", "déchiré", "total", "dur", "traumatique", "précieux", "formidable", "tragique", "entraîné", "tremendous", "triangular", "tricky", "trifling", "trim", "trivial", "troubled", "true", "trusting", "trusty", "trusty", "truthful", "tubby", "turbulent", "twin", "laid", "ultime", "inacceptable", "inconscient", "peu commun", "inconscient", "sous-estimé", "inégal", "inégal", "inachevé", "inapte", "déplié", "malheureux", "malheureux", "malsain", "uniforme", "insignifiant", "unique", "uni", "non soigné", "inconnu", "illégal", "non souligné", "malchanceux", "contre nature", "désagréable", "irréaliste", "non mûr", "indiscipliné", "désintéressé", "disgracieux", "instable", "inculte", "désordonné", "intempestif", "non essayé", "faux", "inutilisé", "inhabituel", "malvenu", "peu maniable", "unwilling", "unwitting", "unwritten", "upbeat", "upright", "upset", "urban", "usable", "used", "useful", "useless", "utilized", "utter", "vacant", "vague", "vain", "valid", "précieux", "insipide", "variable", "vaste", "velouté", "vénéré", "vengeur", "vérifiable", "vibrant", "vicieux", "victorieux", "vigilant", "vigoureux", "méchant", "violet", "violent", "virtuel", "vertueux", "visible", "vital", "vivace", "vif", "volumineux", "faible", "guerrier", "chaleureux", "chaleureux", "déformé", "méfiant", "gaspilleur", "attentif", "gorgé d'eau", "aqueux", "ondulé", "riche", "faible", "fatigué", "palmier", "petit", "hebdomadaire", "pleurnichard", "lourd", "bizarre", "bienvenu", "bien documenté","bien soigné", "bien informé", "bien éclairé", "bien fait", "bien aisé", "bien usé", "mouillé", "qui", "capricieux", "tourbillon", "chuchoté", "blanc", "entier", "énorme", "méchant", "large", "yeux écarquillés", "ondulé", "sauvage", "volontaire", "flétri", "sinueux", "venteux", "ailé", "tordu", "sage", "spirituel", "bancal"," malheureux ", " merveilleux ", " boisé ", " loufoque ", " verbeux ", " mondain ", " usé ", " inquiet ", " inquiétant ", " pire ", " pire ", " sans valeur ", " valable ", " digne ", " courroucé ", " misérable ", "se tordre ", " avoir tort ", " être irrité ", " bâiller ", " annuel ", " jaune ", " jaunâtre ", " jeune ", " juvénile ", " délicieux ", " loufoque ", " zélé ", " piquant ", " zigzaguant ", " rocailleux "]; 
+
+        var name2 = ["peuple", "histoire", "chemin", "art", "monde", "information", "carte", "famille", "gouvernement", "santé", "système", "ordinateur", "viande", "année", "merci", "musique", "personne", "lecture", "méthode", "données", "nourriture", "compréhension", "théorie", "droit", "oiseau", "littérature", "problème", "logiciel", "contrôle", "connaissance", "pouvoir", "capacité", "économie", "amour", "internet", "télévision", "science", "bibliothèque", "nature", "fait", "produit", "idée", "température", "investissement", "région", "société", "activité", "histoire", "industrie", "média", "chose", "four", "communauté", "définition", "sécurité", "qualité", "développement", "langue", "gestion", "lecteur", "variété", "vidéo", "semaine", "sécurité", "pays", "examen", "film", "organisation", "équipement", "physique", "analyse", "politique", "série", "pensée", "base", "petit ami", "direction", "stratégie", "technologie", "armée", "caméra", "liberté", "papier", "environnement", "enfant", "instance", "mois", "vérité", "marketing", "université", "écriture", "article", "département", "différence", "objectif", "nouvelles", "audience", "pêche", "croissance", "revenu", "mariage", "utilisateur", "combinaison", "échec", "signification", "médecine", "philosophie", "professeur", "communication", "nuit", "chimie", "maladie", "disque", "énergie", "nation", "route", "rôle", "soupe", "publicité", "emplacement", "succès", "addition", "appartement", "éducation", "mathématiques", "moment", "peinture", "politique", "attention", "décision", "événement", "propriété", "shopping", "étudiant", "bois", "compétition", "distribution", "divertissement", "bureau", "population", "président", "unité", "catégorie", "cigarette", "contexte", "introduction", "opportunité", "performance", "conducteur", "vol", "longueur", "magazine", "journal", "relation", "enseignement", "cellule", "concessionnaire", "débat", "découverte", "lac", "membre", "message", "téléphone", "scène", "apparence", "association", "concept", "client", "mort", "discussion", "logement", "inflation", "assurance", "humeur", "femme", "conseil", "sang", "effort", "expression", "importance", "opinion", "paiement", "réalité", "responsabilité", "situation", "compétence", " déclaration ", " richesse ", " application ", " ville ", " comté ", " profondeur ", " domaine ", " fondation ", " grand-mère ", " cœur ", " perspective ", " photo ", " recette ", " studio ", " sujet ", " collection ", " dépression ", " imagination ", " passion ", " pourcentage ", " ressource ", " cadre ", " annonce ", " agence ", " collège ", " connexion ", " critique ", " dette ", " description ", " mémoire ", " patience ", " secrétaire ", " solution ", " administration ", " aspect ", " attitude ", " directeur ", " personnalité ", " psychologie ", " recommandation ", " réponse ", " sélection ", " stockage ", " version ", " alcool ", " argument ", " plainte ", " contrat ", " accent ", " autoroute ", " perte ", " adhésion ", " possession ", " préparation ", " steak ", " syndicat ", " accord ", " cancer ", " monnaie ", " emploi ", " ingénierie ", " entrée ", " interaction ", " limite ", " mélange ", " préférence ", " région ", " république ", " siège ", " tradition ", " virus ", " acteur ", " classe ", " livraison ", " dispositif ", " difficulté ", " drame ", " élection ", " moteur ", " football ", " orientation ", " hôtel ", " match ", " propriétaire ", " priorité ", " protection ", " suggestion ", " tension ", " variation ", " anxiété ", " atmosphère ", " conscience ", " pain ", " climat ", " comparaison ", " confusion ", " construction ", " ascenseur ", " émotion ", " employé ", "employeur", "invité", "hauteur", "leadership", "centre commercial", "manager", "opération", "enregistrement", "respect", "échantillon", "transport", "ennuyeux", "charité", "cousin", "désastre", "rédacteur", "efficacité", "excitation", "étendue", "feedback", "guitare", "devoir", "leader", "maman", "résultat", "permission", " présentation ", " promotion ", " réflexion ", " réfrigérateur ", " résolution ", " revenu ", " session ", " chanteur ", " tennis ", " panier ", " bonus ", " cabinet ", " enfance ", " église ", " vêtements ", " café ", " dîner ", " dessin ", " cheveux ", " audition ", " initiative ", " jugement ", " laboratoire ", " mesure ", " mode ", " boue ", "orange", "poésie", "police", "possibilité", "procédure", "reine", "ratio", "relation", "restaurant", "satisfaction", "secteur", "signature", "signification", "chanson", "dent", "ville", "véhicule", "volume", "femme", "accident", "aéroport", "rendez-vous", "arrivée", "hypothèse", "baseball", "chapitre", "comité", "conversation", "base de données", "enthousiasme", "erreur", "explication", "agriculteur", "portail", "fille", "salle", "historien", "hôpital", "blessure", "instruction", "entretien", "fabricant", "repas", "perception", "tarte", "poème", "présence", "proposition", "réception", "remplacement", "révolution", "rivière", "fils", "discours", "thé", "village", "avertissement", "vainqueur", "travailleur", "écrivain", "assistance", "souffle", "acheteur", "poitrine", "chocolat", "conclusion", "contribution", "cookie", "courage", "bureau", "tiroir", "établissement", "examen", "ordures", "épicerie", "miel", "impression", "amélioration","indépendance", "insecte", "inspection", "inspecteur", "roi", "échelle", "menu", "sanction", "piano", "pomme de terre", "profession", "professeur", "quantité", "réaction", "exigence", "salade", "soeur", "supermarché", "langue", "faiblesse", "mariage", "affaire", "ambition", "analyste", "pomme", "mission", "assistant", "salle de bain", "chambre", "bière", "anniversaire", "fête", "championnat", "joue", "client", "conséquence", "départ", "diamant", "saleté", "oreille", "fortune", "amitié", "funérailles", "gène", "petite amie", "chapeau", "indication", "intention", "dame", "minuit", "négociation", "obligation", "passager", "pizza", "plate-forme", "poète", "pollution", "reconnaissance", "réputation", "chemise", "orateur", "étranger", "chirurgie", "sympathie", "conte", "gorge", "entraîneur", "oncle", "jeunesse", "temps", "travail", "film", "eau", "argent", "exemple", "pendant", "affaires", "étude", "jeu", "vie", "forme", "air", "jour", "lieu", "nombre", "partie", "champ", "poisson", "dos", "processus", "chaleur", "main", "expérience", "travail", "livre", "fin", "point", "type", "maison", "économie", "valeur", "corps", "marché", "guide", "intérêt", "état", "radio", "cours", "entreprise", "prix", "taille", "carte", "liste", "esprit", "commerce", "ligne", "soin", "groupe", "risque", "mot", "graisse", "force", "clé", "lumière", "formation", "nom", "école", "haut", "montant", "niveau", "ordre", "pratique", "recherche", "sens", "service", "pièce", "web", "patron", "sport", "plaisir", "maison", "page", "terme", "test", "réponse", "son", "focus", "matière", "genre", "sol", "tableau", "huile", "image", "accès", "jardin", "gamme", "taux", "raison", "avenir", "site", "demande", "exercice", "image", "cas", "cause", "côte", "action", " âge ", " mauvais ", " bateau ", " record ", " résultat ", " section ", " bâtiment ", " souris ", " argent ", " classe ", " période ", " plan ", " magasin ", " taxe ", " côté ", " sujet ", " espace ", "règle", "stock", "météo", "hasard", "figure", "homme", "modèle", "source", "début", "terre", "programme", "poulet", "conception", "caractéristique", "tête", "matériau", "but", "question", "pierre", "sel", "acte", "naissance", "voiture", "chien", "objet", "échelle", "soleil", "note", "profit", "loyer", "vitesse", "style", "guerre", "banque", "artisanat", "moitié", "intérieur", "extérieur", "standard", "bus", "échange", "œil", "feu", "position", "pression", "stress", "avantage", "bénéfice", "boîte", "cadre", "enjeu", "étape", "cycle", "visage", "article", "métal", "peinture", "revue", "pièce", "écran", "structure", "vue", "compte", "balle", "discipline", "moyen", "partage", "équilibre", "bit", "noir", "fond", "choix", "cadeau", "impact", "machine", "forme", "outil", "vent", "adresse", "moyenne", "carrière", "culture", "matin", "pot", "signe", "table", "tâche", "condition", "contact", "crédit", "oeuf", "espoir", "glace", "réseau", "nord", "carré", "tentative", "date", "effet", "lien", "poste", "étoile", "voix", "capitale", "défi", "ami", "soi", "tir", "brosse", "couple", "sortie", "front", "fonction", "manque", "vivant", "plante", "plastique", "spot", "été", "goût", "thème", "piste", "aile", "cerveau", "bouton", "clic", "désir", "pied", "gaz", "influence", "avis", "pluie", "mur", "base", "dommage", "distance", "sentiment", "paire", "épargne", "personnel", "sucre", "cible", "texte", "animal", "auteur", "budget", "remise", "fichier", "sol", "leçon", "minute", "officier", "phase", "référence", "registre", "ciel", "scène", "bâton", "titre", "problème", "bol", " pont ", " campagne ", " personnage ", " club ", " bord ", " preuve ", " éventail ", " lettre ", " serrure ", " maximum ", " roman ", " option ", " pack ", " parc ", " quart ", " peau ", " tri ", " poids ", " bébé ", " arrière-plan ", " porter ", " plat ", " facteur ", " fruit ", " verre ", " joint ", " maître ", " muscle ", " rouge ", " force ", " trafic ", " voyage ", "appel ", " diagramme ", " équipement ", " idéal ", " cuisine ", " terre ", " rondin ", " mère ", " filet ", " fête ", " principe ", " relatif ", " vente ", " saison ", " signal ", " esprit ", " rue ", " arbre ", " vague ", " ceinture ", " banc ", " commission ", " copie ", " chute ", " minimum ", " chemin ", " progrès ", " projet ", " mer ", " sud ", " statut ", "stuff", "ticket", "tour", "angle", "blue", "breakfast", "confidence", "daughter", "degree", "doctor", "dot", "dream", "duty", "essay", "father", "fee", "finance", "heure", "jus", "chance", "lait", "bouche", "paix", "pipe", "stable", "tempête", "substance", "équipe", "tour", "après-midi", "chauve-souris", "plage", "blanc", "attraper", "chaîne", "considération", "crème", "équipe", "détail", "or", "entretien", "enfant", "marque", "mission", "douleur", "plaisir", "score","vis", "sexe", "boutique", "douche", "costume", "ton", "fenêtre", "agent", "bande", "bain", "bloc", "os", "calendrier", "candidat", "casquette", "manteau", "concours", "coin", "cour ", " coupe ", " district ", " porte ", " est ", " doigt ", " garage ", " garantie ", " trou ", " crochet ", " outil ", " couche ", " conférence ", " mensonge ", " manière ", " réunion ", " nez ", " parking ", " partenaire ", " profil ", " riz ", " routine ", " horaire ", " natation ", " téléphone ", " pourboire ", " hiver ", " compagnie aérienne ", " sac ", " bataille ", " lit ", " facture ","ennuyeux", "gâteau", "code", "courbe", "designer", "dimension", "robe", "facilité", "urgence", "soirée", "extension", "ferme", "combat", "écart", "grade", "vacances", "horreur", "cheval", "hôte", "mari", "prêt", "erreur", "montagne", "clou", "bruit", "occasion", "paquet", "patient", "pause", "phrase", "preuve", "course", "soulagement", "sable", "phrase", "épaule", "fumée", "estomac", "ficelle", "touriste", "serviette", "vacances", "ouest", "roue", "vin", "bras", "côté", "associé", "pari", "coup", "frontière", "branche", "sein", "frère", "copain", "bouquet", "puce", "entraîneur", "croix", "document", "brouillon", "poussière", "expert", "sol", "dieu", "golf", "habitude", "fer", "juge", "couteau", "paysage", "ligue", "courrier", "désordre", "natif", "ouverture", "parent", "motif", "épingle", "piscine", "livre", "demande", "salaire", "honte", "abri", "chaussure", "argent", "tacle", "réservoir", "confiance", "assister", "cuire", "barre", "cloche", "vélo", "blâmer", "garçon", "brique", "chaise", "placard", "indice", "col", "commentaire", "conférence", "diable", "régime", "peur", "carburant", "gant", "veste", "déjeuner", "moniteur", "hypothèque", "infirmière", "rythme", "panique", "pic", "avion", "récompense", "rang", "sandwich", "choc", "dépit", "spray", "surprise", "jusqu'à", "transition", "week-end", "bienvenue", "cour", "alarme", "plier", "vélo", "mordre", "aveugle", "bouteille", "câble", "bougie", "employé", "nuage", "concert", "compteur", "fleur", "grand-père", "préjudice", "genou", "avocat", "cuir", "charge", "miroir", "cou", "pension", "assiette", "violet", "ruine", "navire", "jupe", "tranche", "neige", "spécialiste", "coup", "interrupteur", "poubelle", "air", "zone", "colère", "récompense", "offre", "amer", "botte", "insecte", "camp", "bonbon", "tapis", "chat", "champion", "canal", "horloge", "confort", "vache", "crack", "ingénieur", "entrée", "faute", "herbe", "gars", "enfer", "point culminant", "incident", "île", "blague", "jury", "jambe", "lèvre", "camarade", "moteur", "nerf", "passage", "stylo", "fierté", "prêtre", "prix", "promesse", "résident", "station", "anneau", "toit", "corde", "voile", "schéma", "script", "chaussette", "station", "orteil", "tour", "camion", "témoin", "peut", "va", "autre", "utiliser", "faire", "bon", "regarder", "aider", "aller", "grand", "être", "encore", "public", "lire", "garder", "commencer", "donner", "humain", "local", "général", "spécifique", "long", "jouer", "sentir", "haut", "mettre", "commun", "mettre", "changer", "simple", "passé", "grand", "possible", "particulier", "majeur", "personnel", "actuel", "national", "couper", "naturel", "physique", "show", "try", "check", "second", "call", "move", "pay", "let", "increase", "single", "individual", "turn", "ask", "buy", "guard", "hold", "main", "offer", "potentiel", "professionnel", "international", "voyage", "cuisiner", "alternatif", "spécial", "travail", "entier", "danse", "excuse", "froid", "commercial", "bas", "achat", "dealer", "primaire", "valoir", "tomber", "nécessaire", "positif", "produire", "chercher", "présent", "dépenser", "parler", "créatif", "dire", "coût", "conduire", "vert", "soutien", "content", "enlever", "retourner", "courir", "complexe", "dû", "efficace", "moyen", "régulier", "réserve", "indépendant", "laisser", "original", "atteindre", "repos", "servir", "regarder", "beau", "charge", "actif", "pause", "négatif", "sûr", "séjour", "visite", "visuel", "affecter", "couvrir", "rapport", "lever", "marcher", "blanc", "junior", "choisir", "unique", "classique", "final", "lever", "mélanger", "privé", "arrêter", "enseigner", "western", "préoccupation", "familier", "voler", "officiel", "large", "confortable", "gain", "riche", "sauver", "stand", "jeune", "lourd", "diriger", "écouter", "précieux", "s'inquiéter", "gérer", "diriger", "rencontrer", "libérer", "vendre", "finir", "normal", "presse", "monter", "secret", "répandre", "printemps", "dur", "attendre", "brun", "profond", "afficher", "flux", "frapper", "objectif", "tirer", "toucher", "annuler", "chimique", "pleurer", "jeter", "extrême", "pousser", "conflit", "manger", "remplir", "formel", "sauter", "botter", "opposé", "passer", "lancer", "distant", "total", "traiter", "vaste", "abus", "battre", "brûler", "déposer", "imprimer", "élever", "dormir", "quelque part", "avancer", "consister", "sombre", "double", "tirer", "égal", "fixer", "embaucher", "interne", "rejoindre", "tuer", "sensible", "taper", "gagner", "attaquer", "réclamer", "constant", "traîner", "boire", "deviner", "mineur", "tirer", "brut", "mou", "solide", "porter", "bizarre", "merveilleux", "annuel", "compter", "mort", "doute", "nourrir", "éternel", "impressionner", "répéter", "rond", "chanter", "glisser", "dépouiller", "souhaiter", "combiner", "commander", "creuser", "diviser", "équivalent", "accrocher", "chasser", "initial", "marcher", "mentionner", "spirituel", "enquête", "cravate", "adulte", "bref", "fou", "évasion", "rassemblement", "haine", "antérieur", "réparation", "rude", "triste", "égratignure", "malade", "grève", "employer", "externe", "blessé", "illégal", "rire", "poser", "mobile", "méchant", "ordinaire", "répondre", "royal", "senior", "diviser", "effort", "lutte", "nager", "train", "supérieur", "laver", "jaune", "convertir", "accident", "dépendant", "plier", "drôle", "saisir", "cacher", "manquer", "permettre", "citer", "récupérer", "résoudre", "rouler", "couler", "glisser", "épargner", "suspect", "doux", "balancer", "tordre", "en haut", "habituel", "à l'étranger", "brave", "calme", "concentré", "estimer", "grand", "masculin", "mine", "prompt", "tranquille", "refuser", "regretter", "révéler", "se précipiter", "secouer", "changer", "briller", "voler", "sucer", "entourer", "ours", "brillant", "oser", "cher", "retarder", "ivre", "femme", "hâte", "inévitable", "inviter", "baiser", "soigné", "pop", "punch", "démissionner", "répondre", "représenter", "résister", "déchirer", "frotter", "idiot", "sourire", "épeler", "étirer", "stupide", "déchirer", "temporaire", "demain", "réveil", "envelopper", "hier", "Thomas", "Tom", "Lieuwe"] ;
+
+
+        var name = (capFirst(name2[getRandomInt(0, name2.length + 1)]) + ' ' + capFirst(name1[getRandomInt(0, name1.length + 1)])).replace("  ", " ");
+        return name;
     }
 
 </script>
