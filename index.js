@@ -60,7 +60,6 @@ wss.on('connection', (ws, req) => {
                 }
             }
         }
-        sendM("info__playersInQueue:" + JSON.stringify(waitingNames))
         //sendM("info__playersInQueueBank:" + JSON.stringify(waitingBankAccounts))
         updatePlayersInLobby(waitingNames)
         updateDatabase(data)
