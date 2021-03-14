@@ -508,7 +508,7 @@
             var infoValue = mes.split("__")[1].split(":")[1]
             if (infoName == "yourName") {
                 document.getElementById("customName").value = infoValue
-            } if (infoName == "playersInQueue") {
+            } if (infoName == "playersInQueue" && (status == "connecting" || status == "pre-game lobby")) {
                 showPreGameLobby(JSON.parse(infoValue))
             } if (infoName == "ClientsReady" && status == "pre-game lobby") {
                 updatePreGameLobby(infoValue)
