@@ -111,14 +111,15 @@ wss.on('connection', (ws, req) => {
         console.log("client disconnected")
         var data = readDatabase()
         var disconnectedID = data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString()
-        
-        var index = data.waitingForGame.indexOf(disconnectedID)
+        var index = data.waitingForGame.indexOf(Number(disconnectedID))
         if (index > -1) {
             data.waitingForGame.splice(index, 1)
         }
+
         if (data.waitingForGame.length == 0) {
             resetGame()
         }
+
         updateDatabase(data)
         updatePlayersInLobby(waitingNames)
         clientsReady--
