@@ -13,7 +13,7 @@ const wss = new Server({ server });
 
 var clientID = 0
 var data = readDatabase()
-const authorizedCommands = ["drawCard", "resetGame", "bet"]
+const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards"]
 
 
 wss.on('connection', (ws, req) => {
@@ -24,6 +24,15 @@ wss.on('connection', (ws, req) => {
 
     function getAdressIp(customReq) {
         return customReq.headers['x-forwarded-for'] || customReq.connection.remoteAddress
+    }
+
+    function getMyCards(ID) {
+        var data = readDatabase()
+        for (var i = 0; i < data.usr.length; i++) {
+            if (data.usr[i].id == ID) {
+                sendM(JSON.stringify(data.usr[i].hand))
+            }
+        }
     }
 
     sendM("You're connected")

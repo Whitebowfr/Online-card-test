@@ -23,7 +23,11 @@
         if (mes.toString().includes("ID")) {
             myID = Number(mes.toString().split(":")[1])
         }
-        if (mes.includes("skip__")) {return false}
+        if (mes.includes("skip__")) {
+            return false
+        } if (mes.includes("ID")) {
+            return false
+        }
         else {
             console.log(mes)
         }
