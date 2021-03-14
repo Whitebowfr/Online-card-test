@@ -20,12 +20,14 @@ wss.on('connection', (ws, req) => {
         ws.send(message);
     }
 
-    console.log(data.connectedIP, data.connectedIP.toString().indexOf(req.connection.remoteAddress.toString()))
-    if (data.connectedIP.indexOf(req.connection.remoteAddress) > -1) {
-        sendM("ID :" + data.correspondingID[data.connectedIP.indexOf(req.connection.remoteAddress)].toString())
+    sendM("You're connected")
+
+    console.log(data.connectedIP, data.connectedIP.toString().indexOf( req.headers['x-forwarded-for'] || req.connection.remoteAddress.toString()))
+    if (data.connectedIP.indexOf(req.headers['x-forwarded-for'] || req.connection.remoteAddress) > -1) {
+        sendM("ID :" + data.correspondingID[data.connectedIP.indexOf( req.headers['x-forwarded-for'] || req.connection.remoteAddress)].toString())
     } else {
         clientID = Math.round(Math.random() * 1000)
-        data.connectedIP.push(req.connection.remoteAddress.toString())
+        data.connectedIP.push(req.headers['x-forwarded-for'] || req.connection.remoteAddress.toString())
         data.correspondingID.push(clientID)
         sendM("ID : " + clientID)
     }
@@ -34,7 +36,7 @@ wss.on('connection', (ws, req) => {
     ws.on('close', () => console.log('Client disconnected'));
 
     ws.onmessage = function(evt) { 
-        console.log('received: %s', evt.data, " from ", req.connection.remoteAddress,);
+        console.log('received: %s', evt.data, " from ", req.headers['x-forwarded-for'] || req.socket.remoteAddress);
 
         
         if (evt.data.toString().includes("__")) {

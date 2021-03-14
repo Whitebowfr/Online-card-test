@@ -1,16 +1,1 @@
-{
-    "connectedIP": [
-    ],
-    "correspondingID": [
-    ],
-    "usr": [
-        {
-            "id": "E",
-            "bank": 144
-        },
-        {
-            "id": "A",
-            "bank": 1
-        }
-    ]
-}
+{"connectedIP":["::1"],"correspondingID":[728],"usr":[{"id":"E","bank":144},{"id":"A","bank":1}]}
