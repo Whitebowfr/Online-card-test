@@ -114,6 +114,7 @@ wss.on('connection', (ws, req) => {
         var index = data.waitingForGame.indexOf(Number(disconnectedID))
         if (index > -1) {
             data.waitingForGame.splice(index, 1)
+            waitingNames.splice(index, 1)
         }
 
         if (data.waitingForGame.length == 0) {
