@@ -66,11 +66,16 @@ wss.on('connection', (ws, req) => {
     }
 
     function isReady(ID, state) {
+        var data = readDatabase()
         if (state) {
+            data.isReady.push(ID)
             clientsReady++
         } else {
+            var index = data.isReady.indexOf(Number(ID))
+            data.isReady.splice(index, 1)
             clientsReady--
         }
+        updateDatabase(data)
         sendGlobal("info__ClientsReady:" + clientsReady)
         console.log(clientsReady)
     }

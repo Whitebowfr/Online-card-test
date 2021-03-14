@@ -510,7 +510,7 @@
                 document.getElementById("customName").value = infoValue
             } if (infoName == "playersInQueue") {
                 showPreGameLobby(JSON.parse(infoValue))
-            } if (infoName == "ClientsReady") {
+            } if (infoName == "ClientsReady" && status == "pre-game lobby") {
                 updatePreGameLobby(infoValue)
             }
         }
