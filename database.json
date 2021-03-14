@@ -1,26 +1,17 @@
 {
     "connectedIP": [
-        "::1"
+        "::1",
+        "193.250.96.210"
     ],
     "correspondingID": [
-        289
+        289,
+        69420
     ],
+    "waitingForGame": [],
     "usr": [
         {
-            "id": "E",
-            "bank": 144,
-            "hand": [],
-            "bet": 0
-        },
-        {
-            "id": "A",
-            "bank": 1,
-            "hand": [],
-            "bet": 0
-        },
-        {
-            "id": 289,
-            "bank": 10000000,
+            "id": 69420,
+            "bank": 1000000000,
             "hand": [],
             "bet": 0
         }

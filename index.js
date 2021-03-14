@@ -13,10 +13,13 @@ const wss = new Server({ server });
 
 var clientID = 0
 var data = readDatabase()
+data.waitingForGame = []
+updateDatabase(data)
 const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards"]
 
 
 wss.on('connection', (ws, req) => {
+    var data = readDatabase()
 
     function sendM(message) {
         ws.send(message);
@@ -40,6 +43,7 @@ wss.on('connection', (ws, req) => {
     console.log(data.connectedIP, data.connectedIP.toString().indexOf(getAdressIp(req)))
     if (data.connectedIP.indexOf(getAdressIp(req)) > -1) {
         sendM("ID :" + data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
+        data.waitingForGame.push(data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
     } else {
         clientID = Math.round(Math.random() * 1000)
         data.connectedIP.push(getAdressIp(req))
@@ -52,13 +56,23 @@ wss.on('connection', (ws, req) => {
             "bet": 0
         }
         data.usr.push(clientData)
+        data.waitingForGame.push(clientID)
     }
+    sendM("You are waiting in game with : " + JSON.stringify(data.waitingForGame).replace("[", "").replace("]", ""))
 
     updateDatabase(data)
     
     ws.onclose = function (evt) {
         console.log("client disconnected")
-        var disconnectedID = data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]
+        var data = readDatabase()
+        var disconnectedID = data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString()
+        
+        var index = data.waitingForGame.indexOf(disconnectedID)
+        console.log(index)
+        if (index > -1) {
+            data.waitingForGame.splice(index, 1)
+        }
+        updateDatabase(data)
     }
 
     ws.onmessage = function(evt) { 
@@ -165,8 +179,12 @@ function drawCard(ID) {
     var data = readDatabase()
     for (var i = 0; i < data.usr.length; i++) {
         if (data.usr[i].id == ID) {
-            data.usr[i].hand.push(carte.card)
-            console.log(data.usr[i].hand[data.usr[i].hand.length - 1])
+            if (data.usr[i].hand.length >= 2) {
+                return false
+            } else {
+                data.usr[i].hand.push(carte.card)
+                console.log(data.usr[i].hand[data.usr[i].hand.length - 1])
+            }
         }
     }
     updateDatabase(data)
@@ -199,3 +217,4 @@ function bet(ID, amount) {
     }
     updateDatabase(data)
 }
+resetGame()
