@@ -519,6 +519,7 @@
     function showPreGameLobby(connected) {
         $("#connectionLobby").hide();
         $("#preGameLobby").show();
+        document.getElementById("preGameLobbyMenu").innerHTML = ""
         for (pseudo in connected) {
             var card = document.createElement("h1")
             card.className = "preGameLobbyNames"
