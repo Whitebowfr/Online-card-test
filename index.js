@@ -115,6 +115,7 @@ wss.on('connection', (ws, req) => {
             resetGame()
         }
         updateDatabase(data)
+        clientsReady--
     }
 
     ws.onmessage = function(evt) { 
