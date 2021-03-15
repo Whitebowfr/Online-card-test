@@ -88,7 +88,6 @@ wss.on('connection', (ws, req) => {
 
     sendM("You're connected")
 
-    console.log(data.connectedIP, data.connectedIP.toString().indexOf(getAdressIp(req)))
     if (data.connectedIP.indexOf(getAdressIp(req)) > -1) {
         sendM("skip__ID :" + data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
         for (var i = 0; i < data.usr.length; i++) {
@@ -119,6 +118,14 @@ wss.on('connection', (ws, req) => {
         var data = readDatabase()
         var disconnectedID = data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString()
         var index = data.waitingForGame.indexOf(Number(disconnectedID))
+        var waitingNames = []
+        for (id in data.waitingForGame) {
+            for (var i = 0; i < data.usr.length; i++) {
+                if (data.usr[i].id == disconnectedID) {
+                    waitingNames.push(data.usr[i].name)
+                }
+            }
+        }
 
         if (index > -1) {
             data.waitingForGame.splice(index, 1)
@@ -126,30 +133,24 @@ wss.on('connection', (ws, req) => {
         }
         console.log("waiting :", waitingNames)
 
-        if (data.waitingForGame.length == 0) {
-            resetGame()
-        }
-
         var indexBis = data.isReady.indexOf(Number(disconnectedID))
 
         if (indexBis > -1) {
             data.isReady.splice(indexBis, 1)
         }
 
-        console.log("ID", Number(data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]))
+        console.log("disconnected ID:", disconnectedID)
 
         updateDatabase(data)
         updatePlayersInLobby(waitingNames)
     }
 
     ws.onmessage = function(evt) { 
-        console.log('received: %s', evt.data, " from ", getAdressIp(req));
         if (evt.data.toString().includes("__")) {
             var messageCommand = evt.data.split("__")
             var sendID = messageCommand[messageCommand.length - 1]
             if (messageCommand[0] == "f") {
                 var pureCommand = messageCommand[1].split("(")[0]
-                console.log(sendID, data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))])
                 if (authorizedCommands.includes(pureCommand) && sendID == data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]) {
                     eval(messageCommand[1])
                 }
