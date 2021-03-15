@@ -541,7 +541,7 @@
             document.getElementById("preGameLobbyMenu").append(card)
         }
         var isReadyStatus = document.createElement("h1")
-        isReadyStatus.innerText = ready + " / " + connected.length
+        isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
         isReadyStatus.className = "preGameLobbyReadyPlayers"
         document.getElementById("preGameLobbyMenu").append(isReadyStatus)
 
@@ -581,7 +581,7 @@
         }
         var isReadyStatus = document.getElementsByClassName("preGameLobbyReadyPlayers")[0]
         if (connected != null) {
-            isReadyStatus.innerText = ready + " / " + connected.length
+            isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
         } else {
             isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
         }
