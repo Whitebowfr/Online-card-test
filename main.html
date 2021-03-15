@@ -551,10 +551,12 @@
     function updatePreGameReady(connected, ready) {
         if (connected != null) {
             var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
+            console.log(currentlyShowedPlayers)
             var currentlyShowedPlayersNames = []
             for (el in currentlyShowedPlayers) {
-                currentlyShowedPlayersNames.push(currentlyShowedPlayers[el].innerText.substring(2))
+                currentlyShowedPlayersNames.push(currentlyShowedPlayers[el].innerText)
             }
+            console.log(currentlyShowedPlayersNames)
             
             for (player in currentlyShowedPlayersNames) {
                 if (!connected.includes(currentlyShowedPlayersNames[player])) {
@@ -563,7 +565,7 @@
             }
 
             for (newPlayer in connected) {
-                if (!currentlyShowedPlayersNames.includes(connected[newPlayer])) {
+                if (!currentlyShowedPlayersNames.includes("- " + connected[newPlayer])) {
                     var card = document.createElement("h1")
                     card.className = "preGameLobbyNames"
                     card.innerText = "- " + connected[player]
