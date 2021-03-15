@@ -553,8 +553,8 @@
             var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
             console.log(currentlyShowedPlayers)
             var currentlyShowedPlayersNames = []
-            for (el in currentlyShowedPlayers) {
-                currentlyShowedPlayersNames.push(currentlyShowedPlayers[el].innerText)
+            for (var i = 0; i < currentlyShowedPlayers.length; i++) {
+                currentlyShowedPlayersNames.push(currentlyShowedPlayers[i].innerText)
             }
             console.log(currentlyShowedPlayersNames)
             
