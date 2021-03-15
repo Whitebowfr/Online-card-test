@@ -546,6 +546,7 @@
         document.getElementById("preGameLobbyMenu").append(isReadyStatus)
         if(document.getElementById("readyCheckbox").checked) {
             document.getElementById("readyCheckbox").checked = false
+            send("f__isReady(" + myID + ",false)__" + myID)
         }
 
         status = "pre-game lobby basic"
@@ -555,6 +556,7 @@
         if (connected != null) {
             if(document.getElementById("readyCheckbox").checked) {
                 document.getElementById("readyCheckbox").checked = false
+                send("f__isReady(" + myID + ",false)__" + myID)
             }
             var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
             console.log("Showed elements",currentlyShowedPlayers)
