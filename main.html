@@ -550,7 +550,27 @@
 
     function updatePreGameReady(connected, ready) {
         if (connected != null) {
-            console.log("players connected (server):",connected, "players ready:", ready)
+            var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
+            var currentlyShowedPlayersNames = []
+            for (el in currentlyShowedPlayers) {
+                currentlyShowedPlayersNames.push(currentlyShowedPlayers[el].innerText.substring(2))
+            }
+            
+            for (player in currentlyShowedPlayersNames) {
+                if (!connected.includes(currentlyShowedPlayersNames[player])) {
+                    currentlyShowedPlayers[player].remove()
+                }
+            }
+
+            for (newPlayer in connected) {
+                if (!currentlyShowedPlayersNames.includes(connected[newPlayer])) {
+                    var card = document.createElement("h1")
+                    card.className = "preGameLobbyNames"
+                    card.innerText = "- " + connected[player]
+                    document.getElementById("preGameLobbyMenu").append(card)
+                }
+            }
+            /*console.log("players connected (server):",connected, "players ready:", ready)
             var currentShowPlayersElements = document.getElementsByClassName("preGameLobbyNames")
             var currentShowPlayerNames = []
             for (var i = 0; i < currentShowPlayersElements.length; i++) {
@@ -567,17 +587,7 @@
                     document.getElementById("preGameLobbyMenu").append(card)
                 }
             }
-            console.log(currentShowPlayerNames)
-            if (findDuplicates(currentShowPlayersElements).length > 0) {
-                for (var i = 0; i < currentShowPlayersElements.length; i++) {
-                    if (findDuplicates(currentShowPlayersElements).includes(currentShowPlayersElements[i])) {
-                        var index = currentShowPlayersElements.indexOf(currentShowPlayersElements[i])
-                        if (index > -1) {
-                            currentShowPlayersElements.splice(index, 1)
-                        }
-                    }
-                }
-            }
+            console.log(currentShowPlayerNames)*/
         }
         var isReadyStatus = document.getElementsByClassName("preGameLobbyReadyPlayers")[0]
         if (connected != null) {
