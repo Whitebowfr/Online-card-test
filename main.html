@@ -583,7 +583,7 @@
         if (connected != null) {
             isReadyStatus.innerText = ready + " / " + connected.length
         } else {
-            isReadyStatus.innerText = ready + " / " + isReadyStatus.innerText.split(" / ")[1]
+            isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
         }
     }
 
