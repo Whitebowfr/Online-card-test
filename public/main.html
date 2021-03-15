@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <script src="mainClient.js"></script>
+    <link href="mainClient.css" rel="stylesheet" type="text/css">
+    <title>Test poker et tou là</title>
+    <style></style>
+</head>
+
+<body onload="setupAudio()">
+    <audio id="music_player" src="resources/musics/Kahoot Medieval.mp3" autoplay="autoplay"> </audio>
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div id="connectionLobby" style="display: block;">
+        <h2>Bienvenue dans le lobby !</h2>
+        <div id="mainLobbyMenu" class="mainMenus">
+            <div class="form-control">
+                <input type="text" required id="customName" />
+                <label style="font-family: 'Exo', sans-serif;">Pseudo</label>
+            </div>
+            <div class="container">
+                <div class="center">
+                    <button class="btn" onclick="connect()">
+                        <svg width="180px" height="60px" viewBox="0 0 180 60" class="border">
+                            <polyline points="179,1 179,59 1,59 1,1 179,1" class="bg-line" />
+                            <polyline points="179,1 179,59 1,59 1,1 179,1" class="hl-line" />
+                        </svg>
+                        <span style="font-family: 'Exo', sans-serif;">Rejoindre</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="preGameLobby" style="display: none; text-align: center;">
+        <h1 style="font-size: 3.5rem;">En attente de démarrage</h1>
+        <div class="page__toggle">
+            <label class="toggle">
+              <input id="readyCheckbox" class="toggle__input" type="checkbox" onchange='send("f__isReady(" + myID + "," + this.checked + ")__" + myID)'>
+              <span class="toggle__label">
+                <span class="toggle__text">Prêt !</span>
+              </span>
+            </label>
+        </div>
+        <div id="preGameLobbyMenu" class="mainMenus preGameCards" style="margin-top: 40vh;">
+        </div>
+    </div>
+    <div id="inGameOptionMenu">
+        <h3 class="inGameOptionMenuList" onclick="handleInGameOptions()">⚙️</h3>
+        <h3 class="inGameOptionMenuList" style="cursor: pointer;" id="inGameOptionMenuAudio" onclick="handleInGameAudio(this.innerText)">🔊</h3>
+        <h3 class="inGameOptionMenuList" style="font-size: 2rem;" onclick="handleInGameInfo()">ℹ️</h3>
+    </div>
+    <div id="inGameMenu" style="width: 100%; height: 100%; display: none;">
+        <div id="inGameOptionsDiv" style="display: none;">
+            <label class="switch" for="checkboxSound" style="display: inline-block;">
+                <input type="checkbox" id="checkboxSound" oninput="localStorage.setItem('musicPlayingOnStart', this.checked)" />
+                <div class="slider round"></div>
+              </label>
+            <h3 class="inGameOptionLabel">Auto launching of the music</h3>
+            <br>
+            <label class="switch" for="checkboxTokenLimit">
+                <input type="checkbox" id="checkboxTokenLimit" />
+                <div class="slider round"></div>
+              </label>
+            <h3 class="inGameOptionLabel">Fuck</h3>
+
+        </div>
+        <div id="inGameWrapper">
+            <div id="inGamePokerTable"></div>
+            <ul id="inGameInteractionButtons">
+                <li id="inGameCheckButton">Check</li>
+                <li id="inGameSuivreButton">Suivre</li>
+                <li id="inGameCoucherButton">Se coucher</li>
+                <li id="inGameTapisButton">TAPIS</li>
+            </ul>
+            <div id="inGameMainIU">
+                <h4 class="inGameMenuUI">Jean paul</h4>
+                <h4 class="inGameMenuUI">Total 13589 $ - Mise 500 $</h4>
+                <h4 class="inGameMenuUI">Timer : 15:08:82 - Tour 15</h4>
+                <h4 class="inGameMenuUI">Statut du joueur : Grosse Blind</h4>
+            </div>
+            <div class="testTokenPileBlack">
+                <h3 id="testTokenCounterBlack" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
+            </div>
+            <div class="testTokenPileBlue">
+                <h3 id="testTokenCounterBlue" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
+            </div>
+            <div class="testTokenPileGreen">
+                <h3 id="testTokenCounterGreen" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
+            </div>
+            <div class="testTokenPileRed">
+                <h3 id="testTokenCounterRed" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
+            </div>
+            <div class="testTokenPileYellow">
+                <h3 id="testTokenCounterYellow" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
+            </div>
+            <div id="temporaryButtons" style="margin-left: 40vw">
+                <input type="button" value="add 10" onclick="createTokenPile([0,0,0,0,1])">
+                <input type="button" value="add 50" onclick="createTokenPile([0,0,0,1,0])">
+                <input type="button" value="add 100" onclick="createTokenPile([0,0,1,0,0])">
+                <input type="button" value="add 200" onclick="createTokenPile([0,1,0,0,0])">
+                <input type="button" value="add 500" onclick="createTokenPile([1,0,0,0,0])">
+                <input type="button" value="add 5 of each" onclick="createTokenPile([5,5,5,5,5])">
+                <br>
+                <input type="button" value="remove 10" onclick="createTokenPile([0,0,0,0,-1])">
+                <input type="button" value="remove 50" onclick="createTokenPile([0,0,0, -1,0])">
+                <input type="button" value="remove 100" onclick="createTokenPile([0,0,-1,0,0])">
+                <input type="button" value="remove 200" onclick="createTokenPile([0,-1,0,0,0])">
+                <input type="button" value="remove 500" onclick="createTokenPile([-1,0,0,0,0])">
+                <input type="button" value="remove 5 of each" onclick="createTokenPile([-5,-5,-5,-5,-5])">
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    if (localStorage.getItem("musicPlayingOnStart") == "true") {
+        document.getElementById("checkboxSound").checked = true
+    } else {
+        document.getElementById("checkboxSound").checked = false
+        document.getElementById("inGameOptionMenuAudio").innerText = "🔇"
+    }
+    const inputs = document.querySelectorAll('.form-control input');
+    const labels = document.querySelectorAll('.form-control label');
+    var status = "none"
+
+    labels.forEach(label => {
+        label.innerHTML = label.innerText
+            .split('')
+            .map((letter, idx) => `<span style="
+                    transition-delay: ${idx * 50}ms
+                ">${letter}</span>`)
+            .join('');
+    });
+
+    function loadGame(players) {
+        console.log(players)
+        var myID = 599
+        for (var i = 0; i < JSON.parse(players).length; i++) {
+            if (JSON.parse(players)[i].id == myID) {
+                var myPlace = i
+            }
+        }
+        document.getElementsByClassName("area")[0].style.display = "none"
+        $("#inGameMenu").show("fast")
+        $("#preGameLobby").hide("fast")
+        showCard(760, 450, 17, 0.48)
+        showCard(635, 450, -17, 0.48)
+        showCard(375, 135, 0, 0.35)
+        showCard(545, 135, 0, 0.35)
+        showCard(715, 135, 0, 0.35)
+        showCard(885, 135, 0, 0.35)
+        showCard(1055, 135, 0, 0.35)
+    }
+
+
+    function handleInGameOptions() {
+        console.log(document.getElementById("inGameOptionsDiv").style.display)
+        if (document.getElementById("inGameOptionsDiv").style.display != "none") {
+            $("#inGameOptionsDiv").hide("fast")
+        } else {
+            $("#inGameOptionsDiv").show("fast")
+        }
+    }
+
+    audio(true)
+
+    function handleInGameAudio(emoji) {
+        console.log(emoji)
+        if (emoji == "🔊") {
+            document.getElementById("inGameOptionMenuAudio").innerText = "🔇"
+            audio(false)
+        } else {
+            document.getElementById("inGameOptionMenuAudio").innerText = "🔊"
+            audio(true)
+        }
+    }
+
+    function handleInGameInfo() {
+
+    }
+
+    function showCard(posX, posY, rotation, scale) {
+        var card = document.createElement("div")
+        card.style.background = "url('resources/img/testCard.png')"
+        card.style.backgroundRepeat = "no-repeat"
+        card.style.backgroundSize = "cover"
+        card.style.height = "624px"
+        card.style.width = "440px"
+        card.style.marginLeft = posX + "px"
+        card.style.marginTop = posY + "px"
+        card.style.position = "absolute"
+        card.style.transform = "rotate(" + rotation + "deg) scale(" + scale + ")"
+        document.getElementById("inGameWrapper").insertBefore(card, document.querySelector(".testTokenPileBlack"))
+    }
+
+    //The array should be in order, aka [black, blue, green, red, yellow]
+    function createTokenPile(array) {
+        var classes = ["Black", "Blue", "Green", "Red", "Yellow"]
+        for (var i = 0; i < array.length; i++) {
+            var numberOfTokens = Number(document.getElementById("testTokenCounter" + classes[i]).innerText) || 0
+            var secondColumn = 0
+            if (array[i] < 0) {
+                console.log(array[i])
+                if (numberOfTokens > 58) {
+                    var numberOfTokensToRemove = Math.abs(array[i]) - (numberOfTokens - 58)
+                } else {
+                    var numberOfTokensToRemove = Math.abs(array[i])
+                }
+                if (numberOfTokensToRemove > numberOfTokens) {
+                    var numberOfTokensToRemove = numberOfTokens
+                }
+                console.log("Number of tokens to remove:", numberOfTokensToRemove)
+                var tokensToRemove = document.querySelectorAll(".testTokenPile" + classes[i] + " > div")
+                console.log("Elements to remove", tokensToRemove)
+                for (var k = numberOfTokensToRemove; k > 0; k--) {
+                    console.log(numberOfTokensToRemove - k)
+                    var currentChildren = tokensToRemove[tokensToRemove.length - k]
+                    document.getElementsByClassName("testTokenPile" + classes[i])[0].removeChild(currentChildren)
+                }
+            }
+            for (var j = numberOfTokens; j < array[i] + numberOfTokens; j++) {
+                if (token != null && !checkVisible(token) && j != 0) {
+                    break
+                }
+                var token = document.createElement("div")
+                token.className = "testToken testToken" + classes[i]
+                if (j > 15) {
+                    var secondColumn = 260
+                    token.style.top = 90 - (2.5 * (j - 15)) + "vh"
+                } else {
+                    token.style.top = 90 - (2.5 * j) + "vh"
+                }
+                if (j != 0 && j != 16) {
+                    token.style.transform = "scale(0.2) translateY(-" + getRandomInt(140, 150) + "%) translateX(" + getRandomInt(-40 + secondColumn, 40 + secondColumn) + "px)"
+                } else {
+                    if (secondColumn != 0) {
+                        token.style.transform = "scale(0.2) translateY(-100%) translateX(300px)"
+                    } else {
+                        token.style.transform = "scale(0.2) translateY(-150%)"
+                    }
+                }
+                document.getElementsByClassName("testTokenPile" + classes[i])[0].append(token)
+            }
+            document.getElementById("testTokenCounter" + classes[i]).innerText = numberOfTokens + array[i]
+        }
+    }
+
+    function showPreGameLobby(connected, ready) {
+        $("#connectionLobby").hide();
+        $("#preGameLobby").show();
+        document.getElementById("preGameLobbyMenu").innerHTML = ""
+        for (pseudo in connected) {
+            var card = document.createElement("h1")
+            card.className = "preGameLobbyNames"
+            card.innerText = "- " + connected[pseudo]
+            document.getElementById("preGameLobbyMenu").append(card)
+        }
+        var isReadyStatus = document.createElement("h1")
+        isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
+        isReadyStatus.className = "preGameLobbyReadyPlayers"
+        document.getElementById("preGameLobbyMenu").append(isReadyStatus)
+        if (document.getElementById("readyCheckbox").checked) {
+            document.getElementById("readyCheckbox").checked = false
+            send("f__isReady(" + myID + ",false)__" + myID)
+        }
+
+        status = "pre-game lobby basic"
+    }
+
+    function updatePreGameReady(connected, ready) {
+        if (connected != null) {
+            if (document.getElementById("readyCheckbox").checked) {
+                document.getElementById("readyCheckbox").checked = false
+                send("f__isReady(" + myID + ",false)__" + myID)
+            }
+            var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
+            console.log("Showed elements", currentlyShowedPlayers)
+            var currentlyShowedPlayersNames = []
+            for (var i = 0; i < currentlyShowedPlayers.length; i++) {
+                currentlyShowedPlayersNames.push(currentlyShowedPlayers[i].innerText)
+            }
+            console.log("Showed player names :", currentlyShowedPlayersNames)
+
+            for (var i = 0; i < currentlyShowedPlayersNames.length; i++) {
+                if (!connected.includes(currentlyShowedPlayersNames[i].toString().substring(2))) {
+                    currentlyShowedPlayers[i].remove()
+                }
+            }
+            console.log("After removal:", currentlyShowedPlayers)
+
+            for (var i = 0; i < connected.length; i++) {
+                console.log("does", currentlyShowedPlayersNames, "includes", ("- " + connected[i]))
+                if (!currentlyShowedPlayersNames.includes("- " + connected[i])) {
+                    var card = document.createElement("h1")
+                    card.className = "preGameLobbyNames"
+                    card.innerText = "- " + connected[i]
+                    console.log("new Card :", card)
+                    document.getElementById("preGameLobbyMenu").append(card)
+                }
+            }
+        }
+        var isReadyStatus = document.getElementsByClassName("preGameLobbyReadyPlayers")[0]
+        if (connected != null) {
+            isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
+        } else {
+            isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
+        }
+    }
+
+    function connect() {
+        send("f__connectToGame(" + '"' + (document.getElementById("customName").value || generateName()) + '"' + "," + myID + ")__" + myID)
+        status = "connecting"
+    }
+</script>
+
+</html>

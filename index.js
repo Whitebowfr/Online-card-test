@@ -5,8 +5,8 @@ const PORT = process.env.PORT || 8080;
 const INDEX = 'main.html';
 
 const server = express()
-  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
-  .listen(PORT, () => console.log(`Listening on ${PORT}`))
+    .use(express.static("public"))
+    .listen(PORT, () => console.log(`Listening on ${PORT}`))
 
 const { Server } = require('ws');
 const wss = new Server({ server });
@@ -18,6 +18,7 @@ data.waitingForGame = []
 updateDatabase(data)
 const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady"]
 
+resetDatabase()
 
 wss.on('connection', (ws, req) => {
     var data = readDatabase()
@@ -76,31 +77,31 @@ wss.on('connection', (ws, req) => {
         }
         var clientsReady = data.isReady.length
         updateDatabase(data)
-        sendGlobal("info__ClientsReady:" + clientsReady)
+        sendGlobal("info__ClientsReady::" + clientsReady)
         if (clientsReady == data.waitingForGame.length && clientsReady >= 1) {
             startGame()
         }
     }
 
     function updatePlayersInLobby(names) {
-        sendGlobal("info__playersInQueue:" + JSON.stringify(names) + ":" + clientsReady)
+        sendGlobal("info__playersInQueue::" + JSON.stringify(names) + "::" + clientsReady)
     }
 
     sendM("You're connected")
 
     if (data.connectedIP.indexOf(getAdressIp(req)) > -1) {
-        sendM("skip__ID :" + data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
+        sendM("skip__ID ::" + data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString())
         for (var i = 0; i < data.usr.length; i++) {
             if (data.usr[i].id == data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]) {
                 var name = data.usr[i].name
             }
         }
-        sendM("info__yourName:" + name)
+        sendM("info__yourName::" + name)
     } else {
         clientID = Math.round(Math.random() * 1000)
         data.connectedIP.push(getAdressIp(req))
         data.correspondingID.push(clientID)
-        sendM("skip__ID : " + clientID)
+        sendM("skip__ID :: " + clientID)
         var clientData = {
             "id": clientID,
             "name": "",
@@ -112,8 +113,8 @@ wss.on('connection', (ws, req) => {
     }
 
     updateDatabase(data)
-    
-    ws.onclose = function (evt) {
+
+    ws.onclose = function(evt) {
         console.log("client disconnected")
         var data = readDatabase()
         var disconnectedID = data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))].toString()
@@ -146,7 +147,7 @@ wss.on('connection', (ws, req) => {
         updatePlayersInLobby(waitingNames)
     }
 
-    ws.onmessage = function(evt) { 
+    ws.onmessage = function(evt) {
         if (evt.data.toString().includes("__")) {
             var messageCommand = evt.data.split("__")
             var sendID = messageCommand[messageCommand.length - 1]
@@ -223,23 +224,119 @@ class Card {
     constructor(card) {
         this.card = card
         const cardsValues = {
-            'As de coeur': 1, '2 de coeur': 2, '3 de coeur': 3, '4 de coeur': 4, '5 de coeur': 5, '6 de coeur': 6, '7 de coeur': 7, '8 de coeur': 8, '9 de coeur': 9, '10 de coeur': 10, 'Valet de coeur': 11, 'Dame de coeur': 12, 'Roi de coeur': 13,
-            'As de carreau': 1, '2 de carreau': 2, '3 de carreau': 3, '4 de carreau': 4, '5 de carreau': 5, '6 de carreau': 6, '7 de carreau': 7, '8 de carreau': 8, '9 de carreau': 9, '10 de carreau': 10, 'Valet de carreau': 11, 'Dame de carreau': 12, 'Roi de carreau': 13,
-            'As de pique': 1, '2 de pique': 2, '3 de pique': 3, '4 de pique': 4, '5 de pique': 5, '6 de pique': 6, '7 de pique': 7, '8 de pique': 8, '9 de pique': 9, '10 de pique': 10, 'Valet de pique': 11, 'Dame de pique': 12, 'Roi de pique': 13,
-            'As de trefle': 1, '2 de trefle': 2, '3 de trefle': 3, '4 de trefle': 4, '5 de trefle': 5, '6 de trefle': 6, '7 de trefle': 7, '8 de trefle': 8, '9 de trefle': 9, '10 de trefle': 10, 'Valet de trefle': 11, 'Dame de trefle': 12, 'Roi de trefle': 13
+            'As de coeur': 1,
+            '2 de coeur': 2,
+            '3 de coeur': 3,
+            '4 de coeur': 4,
+            '5 de coeur': 5,
+            '6 de coeur': 6,
+            '7 de coeur': 7,
+            '8 de coeur': 8,
+            '9 de coeur': 9,
+            '10 de coeur': 10,
+            'Valet de coeur': 11,
+            'Dame de coeur': 12,
+            'Roi de coeur': 13,
+            'As de carreau': 1,
+            '2 de carreau': 2,
+            '3 de carreau': 3,
+            '4 de carreau': 4,
+            '5 de carreau': 5,
+            '6 de carreau': 6,
+            '7 de carreau': 7,
+            '8 de carreau': 8,
+            '9 de carreau': 9,
+            '10 de carreau': 10,
+            'Valet de carreau': 11,
+            'Dame de carreau': 12,
+            'Roi de carreau': 13,
+            'As de pique': 1,
+            '2 de pique': 2,
+            '3 de pique': 3,
+            '4 de pique': 4,
+            '5 de pique': 5,
+            '6 de pique': 6,
+            '7 de pique': 7,
+            '8 de pique': 8,
+            '9 de pique': 9,
+            '10 de pique': 10,
+            'Valet de pique': 11,
+            'Dame de pique': 12,
+            'Roi de pique': 13,
+            'As de trefle': 1,
+            '2 de trefle': 2,
+            '3 de trefle': 3,
+            '4 de trefle': 4,
+            '5 de trefle': 5,
+            '6 de trefle': 6,
+            '7 de trefle': 7,
+            '8 de trefle': 8,
+            '9 de trefle': 9,
+            '10 de trefle': 10,
+            'Valet de trefle': 11,
+            'Dame de trefle': 12,
+            'Roi de trefle': 13
         }
         const otherCardsValues = {
-            'As de coeur': 1, '2 de coeur': 2, '3 de coeur': 3, '4 de coeur': 4, '5 de coeur': 5, '6 de coeur': 6, '7 de coeur': 7, '8 de coeur': 8, '9 de coeur': 9, '10 de coeur': 10, 'Valet de coeur': 11, 'Dame de coeur': 12, 'Roi de coeur': 13,
-            'As de carreau': 14, '2 de carreau': 15, '3 de carreau': 16, '4 de carreau': 17, '5 de carreau': 18, '6 de carreau': 19, '7 de carreau': 20, '8 de carreau': 21, '9 de carreau': 22, '10 de carreau': 23, 'Valet de carreau': 24, 'Dame de carreau': 25, 'Roi de carreau': 26,
-            'As de pique': 27, '2 de pique': 28, '3 de pique': 29, '4 de pique': 30, '5 de pique': 31, '6 de pique': 32, '7 de pique': 33, '8 de pique': 34, '9 de pique': 35, '10 de pique': 36, 'Valet de pique': 37, 'Dame de pique': 38, 'Roi de pique': 39,
-            'As de trefle': 40, '2 de trefle': 41, '3 de trefle': 42, '4 de trefle': 43, '5 de trefle': 44, '6 de trefle': 45, '7 de trefle': 46, '8 de trefle': 47, '9 de trefle': 48, '10 de trefle': 49, 'Valet de trefle': 50, 'Dame de trefle': 51, 'Roi de trefle': 52
+            'As de coeur': 1,
+            '2 de coeur': 2,
+            '3 de coeur': 3,
+            '4 de coeur': 4,
+            '5 de coeur': 5,
+            '6 de coeur': 6,
+            '7 de coeur': 7,
+            '8 de coeur': 8,
+            '9 de coeur': 9,
+            '10 de coeur': 10,
+            'Valet de coeur': 11,
+            'Dame de coeur': 12,
+            'Roi de coeur': 13,
+            'As de carreau': 14,
+            '2 de carreau': 15,
+            '3 de carreau': 16,
+            '4 de carreau': 17,
+            '5 de carreau': 18,
+            '6 de carreau': 19,
+            '7 de carreau': 20,
+            '8 de carreau': 21,
+            '9 de carreau': 22,
+            '10 de carreau': 23,
+            'Valet de carreau': 24,
+            'Dame de carreau': 25,
+            'Roi de carreau': 26,
+            'As de pique': 27,
+            '2 de pique': 28,
+            '3 de pique': 29,
+            '4 de pique': 30,
+            '5 de pique': 31,
+            '6 de pique': 32,
+            '7 de pique': 33,
+            '8 de pique': 34,
+            '9 de pique': 35,
+            '10 de pique': 36,
+            'Valet de pique': 37,
+            'Dame de pique': 38,
+            'Roi de pique': 39,
+            'As de trefle': 40,
+            '2 de trefle': 41,
+            '3 de trefle': 42,
+            '4 de trefle': 43,
+            '5 de trefle': 44,
+            '6 de trefle': 45,
+            '7 de trefle': 46,
+            '8 de trefle': 47,
+            '9 de trefle': 48,
+            '10 de trefle': 49,
+            'Valet de trefle': 50,
+            'Dame de trefle': 51,
+            'Roi de trefle': 52
         }
 
         this.value = cardsValues[card];
         this.totalValue = otherCardsValues[card];
         this.couleur = card.substring(card.indexOf(" de ") + 4)
 
-        var couleurs = {'coeur':0, 'carreau':1, 'pique':2, 'trefle':3}
+        var couleurs = { 'coeur': 0, 'carreau': 1, 'pique': 2, 'trefle': 3 }
         this.position = couleurs[this.couleur] + this.value
     }
 }
@@ -272,6 +369,12 @@ function resetGame() {
     updateDatabase(data)
 }
 
+function resetDatabase() {
+    var data = readDatabase()
+    data.isReady = []
+    data.waitingForGame = []
+}
+
 function startGame() {
     console.log("Game started")
     resetGame();
@@ -280,14 +383,25 @@ function startGame() {
     console.log("players waiting :", data.waitingForGame)
     for (player in data.waitingForGame) {
         for (var i = 0; i < data.usr.length; i++) {
-            console.log(data.usr[i])
             if (data.usr[i].id == data.waitingForGame[player]) {
                 playingPlayers.push(data.usr[i])
             }
         }
     }
-    console.log("playing players : ",playingPlayers)
-    
+    playingPlayers = shuffle(playingPlayers)
+    console.log("playing players : ", playingPlayers)
+    sendGlobal("info__gameStartedWith::" + JSON.stringify(playingPlayers))
+}
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
 }
 
 function bet(ID, amount) {
@@ -307,4 +421,6 @@ function bet(ID, amount) {
     }
     updateDatabase(data)
 }
+
 resetGame()
+resetDatabase()
