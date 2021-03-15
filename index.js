@@ -124,6 +124,7 @@ wss.on('connection', (ws, req) => {
             data.waitingForGame.splice(index, 1)
             waitingNames.splice(index, 1)
         }
+        console.log("waiting :", waitingNames)
 
         if (data.waitingForGame.length == 0) {
             resetGame()
@@ -172,7 +173,6 @@ function sendGlobal(mes) {
 }
 
 function updateDatabase(dataToWrite) {
-    console.log(dataToWrite)
     fs.writeFileSync("database.json", JSON.stringify(dataToWrite, null, 4))
 }
 
