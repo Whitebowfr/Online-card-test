@@ -131,9 +131,10 @@
     </div>
 </body>
 <script>
-    if (localStorage.getItem("musicPlayingOnStart") == "true") {
+    if (localStorage.getItem("musicPlayingOnStart") == "true") { //because fuck booleans
         document.getElementById("checkboxSound").checked = true
-    } else {
+    }
+    if (localStorage.getItem("musicPlayingOnStart") == "false") {
         document.getElementById("checkboxSound").checked = false
         document.getElementById("inGameOptionMenuAudio").innerText = "🔇"
     }
@@ -252,7 +253,7 @@
                     token.style.transform = "scale(0.2) translateY(-" + getRandomInt(140, 150) + "%) translateX(" + getRandomInt(-40 + secondColumn, 40 + secondColumn) + "px)"
                 } else {
                     if (secondColumn != 0) {
-                        token.style.transform = "scale(0.2) translateY(-100%) translateX(300px)"
+                        token.style.transform = "scale(0.2) translateY(-150%) translateX(300px)"
                     } else {
                         token.style.transform = "scale(0.2) translateY(-150%)"
                     }
