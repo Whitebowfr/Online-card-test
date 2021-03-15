@@ -419,6 +419,13 @@
             transition: background-color .2s ease-out;
         }
 
+        .preGameLobbyReadyPlayers {
+            position: absolute;
+            bottom: 0;
+            margin-left: 50%;
+            transform: translateX(-50%);
+        }
+
     </style>
 </head>
 <body>
@@ -504,19 +511,26 @@
             console.log(mes)
         }
         if (mes.includes("info__")) {
-            var infoName = mes.split("__")[1].split(":")[0]
-            var infoValue = mes.split("__")[1].split(":")[1]
-            if (infoName == "yourName") {
-                document.getElementById("customName").value = infoValue
-            } if (infoName == "playersInQueue" && (status == "connecting" || status == "pre-game lobby")) {
-                showPreGameLobby(JSON.parse(infoValue))
-            } if (infoName == "ClientsReady" && status == "pre-game lobby") {
-                updatePreGameLobby(infoValue)
+            var infoValues = []
+            //var infoName = mes.split("__")[1].split(":")[0]
+            for (info in mes.split("__")[1].split(":")) {
+                infoValues[info] = mes.split("__")[1].split(":")[info]
+            }
+            if (infoValues[0] == "yourName") {
+                document.getElementById("customName").value = infoValues[1]
+            } if (infoValues[0] == "playersInQueue" && (status == "connecting" || status == "pre-game lobby basic")) {
+                if (status != "pre-game lobby basic") {
+                    showPreGameLobby(JSON.parse(infoValues[1]), infoValues[2])
+                } else if (status == "pre-game lobby basic") {
+                    updatePreGameReady(JSON.parse(infoValues[1]), infoValues[2])
+                }
+            } if (infoValues[0] == "ClientsReady" && status == "pre-game lobby basic") {
+                updatePreGameReady(null, infoValues[1])
             }
         }
     }
 
-    function showPreGameLobby(connected) {
+    function showPreGameLobby(connected, ready) {
         $("#connectionLobby").hide();
         $("#preGameLobby").show();
         document.getElementById("preGameLobbyMenu").innerHTML = ""
@@ -526,13 +540,39 @@
             card.innerText = "- " + connected[pseudo]
             document.getElementById("preGameLobbyMenu").append(card)
         }
-        var status = document.createElement("h1")
-        status.innerText = "0 / " + connected.length
-        status = "pre-game lobby"
+        var isReadyStatus = document.createElement("h1")
+        isReadyStatus.innerText = ready + " / " + connected.length
+        isReadyStatus.className = "preGameLobbyReadyPlayers"
+        document.getElementById("preGameLobbyMenu").append(isReadyStatus)
+
+        status = "pre-game lobby basic"
     }
 
-    function updatePreGameLobby(number) {
-
+    function updatePreGameReady(connected, ready) {
+        if (connected != null) {
+            console.log(connected, ready)
+            var currentShowPlayersElements = document.getElementsByClassName("preGameLobbyNames")
+            var currentShowPlayerNames = []
+            for (var i = 0; i < currentShowPlayersElements.length; i++) {
+                currentShowPlayerNames.push(currentShowPlayersElements[i].innerText.substring(2))
+            }
+            for (player in connected) {
+                if (connected[player] == currentShowPlayerNames[player]) {
+                    continue
+                } else {
+                    var card = document.createElement("h1")
+                    card.className = "preGameLobbyNames"
+                    card.innerText = "- " + connected[player]
+                    document.getElementById("preGameLobbyMenu").append(card)
+                }
+            }
+        }
+        var isReadyStatus = document.getElementsByClassName("preGameLobbyReadyPlayers")[0]
+        if (connected != null) {
+            isReadyStatus.innerText = ready + " / " + connected.length
+        } else {
+            isReadyStatus.innerText = ready + " / " + isReadyStatus.innerText.split(" / ")[1]
+        }
     }
 
     function send(mes) {

@@ -82,7 +82,7 @@ wss.on('connection', (ws, req) => {
     }
 
     function updatePlayersInLobby(names) {
-        sendGlobal("info__playersInQueue:" + JSON.stringify(names))
+        sendGlobal("info__playersInQueue:" + JSON.stringify(names) + ":" + clientsReady)
     }
 
     sendM("You're connected")
