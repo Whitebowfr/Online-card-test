@@ -552,10 +552,10 @@
     }
 
     function updatePreGameReady(connected, ready) {
-        if(document.getElementById("readyCheckbox").checked) {
-            document.getElementById("readyCheckbox").checked = false
-        }
         if (connected != null) {
+            if(document.getElementById("readyCheckbox").checked) {
+                document.getElementById("readyCheckbox").checked = false
+            }
             var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
             console.log("Showed elements",currentlyShowedPlayers)
             var currentlyShowedPlayersNames = []
