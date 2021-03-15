@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <title>Gros PD</title>
+    <title>Test poker et tou là</title>
     <style>
         @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
         @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200,900');
@@ -550,12 +550,13 @@
 
     function updatePreGameReady(connected, ready) {
         if (connected != null) {
-            console.log(connected, ready)
+            console.log("players connected (server):",connected, "players ready:", ready)
             var currentShowPlayersElements = document.getElementsByClassName("preGameLobbyNames")
             var currentShowPlayerNames = []
             for (var i = 0; i < currentShowPlayersElements.length; i++) {
                 currentShowPlayerNames.push(currentShowPlayersElements[i].innerText.substring(2))
             }
+            console.log("Player names showed :", currentShowPlayerNames)
             for (player in connected) {
                 if (connected[player] == currentShowPlayerNames[player]) {
                     continue
@@ -566,6 +567,21 @@
                     document.getElementById("preGameLobbyMenu").append(card)
                 }
             }
+            console.log(currentShowPlayersElements)
+            if (findDuplicates(currentShowPlayersElements).length > 0) {
+                for (var i = 0; i < currentShowPlayersElements.length; i++) {
+                    if (findDuplicates(currentShowPlayersElements).includes(currentShowPlayersElements[i])) {
+                        var index = currentShowPlayersElements.indexOf(currentShowPlayersElements[i])
+                        if (index > -1) {
+                            currentShowPlayersElements.splice(index, 1)
+                        }
+                    }
+                    var card = document.createElement("h1")
+                    card.className = "preGameLobbyNames"
+                    card.innerText = "- " + connected[pseudo]
+                    document.getElementById("preGameLobbyMenu").append(card)
+                }
+            }
         }
         var isReadyStatus = document.getElementsByClassName("preGameLobbyReadyPlayers")[0]
         if (connected != null) {
@@ -573,6 +589,17 @@
         } else {
             isReadyStatus.innerText = ready + " / " + isReadyStatus.innerText.split(" / ")[1]
         }
+    }
+
+    const findDuplicates = (arr) => {
+        let sorted_arr = arr.slice().sort();
+        let results = [];
+        for (let i = 0; i < sorted_arr.length - 1; i++) {
+            if (sorted_arr[i + 1] == sorted_arr[i]) {
+            results.push(sorted_arr[i]);
+            }
+        }
+        return results;
     }
 
     function send(mes) {

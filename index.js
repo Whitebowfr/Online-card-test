@@ -51,6 +51,7 @@ wss.on('connection', (ws, req) => {
                 data.usr[i].name = name
             }
         }
+        var waitingNames = []
         for (id in data.waitingForGame) {
             for (var i = 0; i < data.usr.length; i++) {
                 if (data.usr[i].id == data.waitingForGame[id]) {
