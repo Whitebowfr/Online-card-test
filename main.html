@@ -558,7 +558,7 @@
             }
             console.log("Player names showed :", currentShowPlayerNames)
             for (player in connected) {
-                if (connected[player] == currentShowPlayerNames[player]) {
+                if (currentShowPlayerNames.indexOf(connected[player]) > -1) {
                     continue
                 } else {
                     var card = document.createElement("h1")
@@ -576,10 +576,6 @@
                             currentShowPlayersElements.splice(index, 1)
                         }
                     }
-                    var card = document.createElement("h1")
-                    card.className = "preGameLobbyNames"
-                    card.innerText = "- " + connected[pseudo]
-                    document.getElementById("preGameLobbyMenu").append(card)
                 }
             }
         }
