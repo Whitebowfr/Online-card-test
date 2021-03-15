@@ -121,7 +121,7 @@ wss.on('connection', (ws, req) => {
         var waitingNames = []
         for (id in data.waitingForGame) {
             for (var i = 0; i < data.usr.length; i++) {
-                if (data.usr[i].id == disconnectedID) {
+                if (data.usr[i].id == data.waitingForGame[id]) {
                     waitingNames.push(data.usr[i].name)
                 }
             }
