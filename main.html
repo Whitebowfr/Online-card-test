@@ -559,7 +559,7 @@
             console.log("Showed player names :", currentlyShowedPlayersNames)
             
             for (var i = 0; i < currentlyShowedPlayersNames.length; i++) {
-                if (!connected.includes("- " + currentlyShowedPlayersNames[i])) {
+                if (!connected.includes(currentlyShowedPlayersNames[i]).substring(2)) {
                     currentlyShowedPlayers[i].remove()
                 }
             }
