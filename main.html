@@ -551,24 +551,27 @@
     function updatePreGameReady(connected, ready) {
         if (connected != null) {
             var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
-            console.log(currentlyShowedPlayers)
+            console.log("Showed elements",currentlyShowedPlayers)
             var currentlyShowedPlayersNames = []
             for (var i = 0; i < currentlyShowedPlayers.length; i++) {
                 currentlyShowedPlayersNames.push(currentlyShowedPlayers[i].innerText)
             }
-            console.log(currentlyShowedPlayersNames)
+            console.log("Showed player names :", currentlyShowedPlayersNames)
             
-            for (player in currentlyShowedPlayersNames) {
-                if (!connected.includes(currentlyShowedPlayersNames[player])) {
-                    currentlyShowedPlayers[player].remove()
+            for (var i = 0; i < currentlyShowedPlayersNames.length; i++) {
+                if (!connected.includes(currentlyShowedPlayersNames[i])) {
+                    currentlyShowedPlayers[i].remove()
                 }
             }
+            console.log("After removal:", currentlyShowedPlayers)
 
-            for (newPlayer in connected) {
-                if (!currentlyShowedPlayersNames.includes("- " + connected[newPlayer])) {
+            for (var i =0; i < connected.length; i++) {
+                console.log("does", currentlyShowedPlayersNames, "includes", ("- " + connected[i]))
+                if (!currentlyShowedPlayersNames.includes("- " + connected[i])) {
                     var card = document.createElement("h1")
                     card.className = "preGameLobbyNames"
-                    card.innerText = "- " + connected[player]
+                    card.innerText = "- " + connected[i]
+                    console.log("new Card :", card)
                     document.getElementById("preGameLobbyMenu").append(card)
                 }
             }
