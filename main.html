@@ -544,13 +544,17 @@
         isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
         isReadyStatus.className = "preGameLobbyReadyPlayers"
         document.getElementById("preGameLobbyMenu").append(isReadyStatus)
-        document.getElementById("readyCheckbox").checked = false
+        if(document.getElementById("readyCheckbox").checked) {
+            document.getElementById("readyCheckbox").checked = false
+        }
 
         status = "pre-game lobby basic"
     }
 
     function updatePreGameReady(connected, ready) {
-        document.getElementById("readyCheckbox").checked = false
+        if(document.getElementById("readyCheckbox").checked) {
+            document.getElementById("readyCheckbox").checked = false
+        }
         if (connected != null) {
             var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
             console.log("Showed elements",currentlyShowedPlayers)
