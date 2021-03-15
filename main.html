@@ -468,7 +468,7 @@
         <h1 style="font-size: 3.5rem;">En attente de démarrage</h1>
         <div class="page__toggle">
             <label class="toggle">
-              <input class="toggle__input" type="checkbox" onchange='send("f__isReady(" + myID + "," + this.checked + ")__" + myID)'>
+              <input id="readyCheckbox" class="toggle__input" type="checkbox" onchange='send("f__isReady(" + myID + "," + this.checked + ")__" + myID)'>
               <span class="toggle__label">
                 <span class="toggle__text">Prêt !</span>
               </span>
@@ -544,11 +544,13 @@
         isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
         isReadyStatus.className = "preGameLobbyReadyPlayers"
         document.getElementById("preGameLobbyMenu").append(isReadyStatus)
+        document.getElementById("readyCheckbox").checked = false
 
         status = "pre-game lobby basic"
     }
 
     function updatePreGameReady(connected, ready) {
+        document.getElementById("readyCheckbox").checked = false
         if (connected != null) {
             var currentlyShowedPlayers = document.getElementsByClassName("preGameLobbyNames")
             console.log("Showed elements",currentlyShowedPlayers)
@@ -575,24 +577,6 @@
                     document.getElementById("preGameLobbyMenu").append(card)
                 }
             }
-            /*console.log("players connected (server):",connected, "players ready:", ready)
-            var currentShowPlayersElements = document.getElementsByClassName("preGameLobbyNames")
-            var currentShowPlayerNames = []
-            for (var i = 0; i < currentShowPlayersElements.length; i++) {
-                currentShowPlayerNames.push(currentShowPlayersElements[i].innerText.substring(2))
-            }
-            console.log("Player names showed :", currentShowPlayerNames)
-            for (player in connected) {
-                if (currentShowPlayerNames.indexOf(connected[player]) > -1) {
-                    continue
-                } else {
-                    var card = document.createElement("h1")
-                    card.className = "preGameLobbyNames"
-                    card.innerText = "- " + connected[player]
-                    document.getElementById("preGameLobbyMenu").append(card)
-                }
-            }
-            console.log(currentShowPlayerNames)*/
         }
         var isReadyStatus = document.getElementsByClassName("preGameLobbyReadyPlayers")[0]
         if (connected != null) {
@@ -600,17 +584,6 @@
         } else {
             isReadyStatus.innerText = ready + " / " + document.getElementsByClassName("preGameLobbyNames").length
         }
-    }
-
-    const findDuplicates = (arr) => {
-        let sorted_arr = arr.slice().sort();
-        let results = [];
-        for (let i = 0; i < sorted_arr.length - 1; i++) {
-            if (sorted_arr[i + 1] == sorted_arr[i]) {
-            results.push(sorted_arr[i]);
-            }
-        }
-        return results;
     }
 
     function send(mes) {
