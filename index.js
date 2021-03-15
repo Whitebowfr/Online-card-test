@@ -126,6 +126,7 @@ wss.on('connection', (ws, req) => {
                 }
             }
         }
+        console.log("Were waiting:", waitingNames, "Disconnected index:", index)
 
         if (index > -1) {
             data.waitingForGame.splice(index, 1)
