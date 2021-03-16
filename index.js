@@ -51,21 +51,24 @@ wss.on('connection', (ws, req) => {
         for (var i = 0; i < data.usr.length; i++) {
             if (data.usr[i].id == ID) {
                 data.usr[i].name = name
+                var modifiedData = data.usr[i]
+                modifiedData.id = 0
+                sendM("info__yourData::" + JSON.stringify(modifiedData))
             }
-        }
-        var waitingNames = []
-        for (id in data.waitingForGame) {
-            for (var i = 0; i < data.usr.length; i++) {
-                if (data.usr[i].id == data.waitingForGame[id]) {
-                    waitingNames.push(data.usr[i].name)
+            var waitingNames = []
+            for (id in data.waitingForGame) {
+                for (var i = 0; i < data.usr.length; i++) {
+                    if (data.usr[i].id == data.waitingForGame[id]) {
+                        waitingNames.push(data.usr[i].name)
+                    }
                 }
             }
+            updatePlayersInLobby(waitingNames)
+            updateDatabase(data)
         }
-        updatePlayersInLobby(waitingNames)
-        updateDatabase(data)
     }
 
-    function isReady(ID, state) {
+    function isReady(ID, state, entryBet) {
         var data = readDatabase()
         if (state) {
             data.isReady.push(Number(ID))
@@ -74,6 +77,16 @@ wss.on('connection', (ws, req) => {
             var indexBis = data.isReady.indexOf(Number(ID))
             if (indexBis > -1) {
                 data.isReady.splice(indexBis, 1)
+            }
+        }
+        for (var i = 0; i < data.usr.length; i++) {
+            if (data.usr[i].id == ID) {
+                if (entryBet > data.usr[i].bank) {
+                    data.usr[i].entryBet = data.usr[i].bank
+                } else {
+                    data.usr[i].entryBet = entryBet
+                }
+                console.log("entrybet :", data.usr[i].bank, entryBet, entryBet > data.usr[i].bank)
             }
         }
         var clientsReady = data.isReady.length
@@ -110,7 +123,9 @@ wss.on('connection', (ws, req) => {
             "name": "",
             "bank": 1000,
             "hand": [],
-            "bet": 0
+            "bet": 0,
+            "entryBet": 0,
+            "ws": ""
         }
         data.usr.push(clientData)
     }
@@ -341,7 +356,7 @@ class Card {
 
         this.value = cardsValues[card];
         this.totalValue = otherCardsValues[card];
-        this.couleur = card.substring(card.indexOf(" de ") + 4)
+        this.couleur = card.split(" de ")[1]
 
         var couleurs = { 'coeur': 0, 'carreau': 1, 'pique': 2, 'trefle': 3 }
         this.position = couleurs[this.couleur] + this.value
@@ -371,12 +386,26 @@ function resetGame() {
     for (var i = 0; i < data.usr.length; i++) {
         data.usr[i].hand = []
         data.usr[i].bet = 0
+        data.usr[i].entryBet = 0
     }
     data.currentGame.publicCards = []
     data.currentGame.totalBetAmount = []
     data.currentGame.spectatorsID = []
     data.currentGame.turn = 0
+    data.currentGame.isInGame = []
     deck = new Deck()
+    updateDatabase(data)
+}
+
+function finishGame(winningID, gain) {
+    var data = readDatabase()
+    for (var i = 0; i < data.usr.length; i++) {
+        if (data.usr[i].id == winningID && data.currentGame.isInGame.includes(winningID)) {
+            data.usr[i].bank += gain
+            resetGame()
+            break
+        }
+    }
     updateDatabase(data)
 }
 
@@ -391,7 +420,6 @@ var playingPlayerTurn = 0
 
 function startGame() {
     console.log("Game started")
-    resetGame();
     data = readDatabase()
     console.log("players waiting :", data.waitingForGame)
     for (var j = 0; j < data.waitingForGame.length; j++) {
@@ -427,7 +455,7 @@ function nextStep() {
     if (playerPlayerTurn >= playingPlayers.length) {
         playerPlayerTurn = 0
     }
-    if (playingPlayers.every((val, i, arr) => val.bet === arr[0].bet || val.bank === 0)) {
+    if (playingPlayers.every((val, i, arr) => val.bet === arr[0].bet || val.entryBet === 0)) {
         combineBets(playingPlayers)
     }
 }
@@ -459,8 +487,8 @@ function bet(ID, amount) {
     var me
     for (var i = 0; i < data.usr.length; i++) {
         if (data.usr[i].id == ID) {
-            if (data.usr[i].bank >= amount) {
-                data.usr[i].bank -= amount
+            if (data.usr[i].entryBet >= amount) {
+                data.usr[i].entryBet -= amount
                 data.usr[i].bet += amount
             } else {
                 return false
@@ -469,7 +497,7 @@ function bet(ID, amount) {
         }
     }
     updateDatabase(data)
-    sendGlobal(`cmd__updateBets(${me.bet}, ${me.bank}, ${ID})`)
+    sendGlobal(`cmd__updateBets(${me.bet}, ${me.entryBet}, ${ID})`)
 }
 
 resetGame()

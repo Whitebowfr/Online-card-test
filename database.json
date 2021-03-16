@@ -9,24 +9,25 @@
     ],
     "isReady": [],
     "waitingForGame": [],
-    "usr": [
-        {
+    "usr": [{
             "id": 69420,
             "name": "",
             "bank": 1000000000,
             "hand": [],
             "bet": 0,
+            "entryBet": 0,
             "ws": ""
         },
         {
             "id": 599,
             "name": "Yeet70421",
-            "bank": 995700,
+            "bank": 953450,
             "hand": [
-                "4 de carreau",
-                "Roi de trefle"
+                "Valet de coeur",
+                "7 de trefle"
             ],
-            "bet": 0,
+            "bet": 500,
+            "entryBet": 2800,
             "ws": ""
         },
         {
@@ -35,6 +36,7 @@
             "bank": 1000,
             "hand": [],
             "bet": 0,
+            "entryBet": 0,
             "ws": ""
         }
     ],
@@ -42,6 +44,7 @@
         "publicCards": [],
         "totalBetAmount": [],
         "spectatorsID": [],
-        "turn": 0
+        "turn": 0,
+        "isInGame": []
     }
 }

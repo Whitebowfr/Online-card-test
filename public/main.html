@@ -48,13 +48,15 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div id="preGameLobby" style="display: none; text-align: center;">
         <h1 style="font-size: 3.5rem;">En attente de démarrage</h1>
-        <div class="page__toggle">
+        <div class="form-control" style="display: inline-block; width: 15%; margin-right: 40px; transform: translateY(-10%);">
+            <input type="number" autocomplete="off" required id="customBet" step="1000" min="500" value="3000" style="background-color: rgba(0, 0, 0, 0);" placeholder="3000$" />
+        </div>
+        <div class="page__toggle" style="display: inline-block;">
             <label class="toggle">
-              <input id="readyCheckbox" class="toggle__input" type="checkbox" onchange='send("f__isReady(" + myID + "," + this.checked + ")__" + myID)'>
+              <input id="readyCheckbox" class="toggle__input" type="checkbox" onchange='toggleReady(this.checked)'>
               <span class="toggle__label">
                 <span class="toggle__text">Prêt !</span>
               </span>
@@ -67,9 +69,9 @@
         <h3 class="inGameOptionMenuList" onclick="handleInGameOptions()">⚙️</h3>
         <h3 class="inGameOptionMenuList" style="cursor: pointer;" id="inGameOptionMenuAudio" onclick="handleInGameAudio(this.innerText)">🔊</h3>
         <h3 class="inGameOptionMenuList" style="font-size: 2rem;" onclick="handleInGameInfo()">ℹ️</h3>
-        <h3 class="inGameOptionMenuList" style="font-size: 2rem;" onclick="handleInGameInfo()">💲</h3>
+        <h3 class="inGameOptionMenuList" onclick="handleConversion()">🚫</h3>
     </div>
-    <div id="inGameOptionsDiv" style="display: none;">
+    <div id="inGameOptionsDiv" style="display: none;" class="inGameOptions">
         <label class="switch" for="checkboxSound" style="display: inline-block;">
             <input type="checkbox" id="checkboxSound" oninput="localStorage.setItem('musicPlayingOnStart', this.checked)" />
             <div class="slider round"></div>
@@ -82,6 +84,66 @@
           </label>
         <h3 class="inGameOptionLabel">Fuck</h3>
     </div>
+    <div id="inGameConversionDiv" style="display: none;" class="inGameOptions">
+        <details class="custom-select">
+            <summary class="radios">
+                <input type="radio" name="item" id="default" title="Convertir" checked>
+                <input type="radio" name="item" id="item1" title="500">
+                <input type="radio" name="item" id="item2" title="200">
+                <input type="radio" name="item" id="item3" title="100">
+                <input type="radio" name="item" id="item4" title="50">
+                <input type="radio" name="item" id="item5" title="10">
+            </summary>
+            <ul class="list">
+                <li>
+                    <label for="item1">500</label>
+                </li>
+                <li>
+                    <label for="item2">200</label>
+                </li>
+                <li>
+                    <label for="item3">100</label>
+                </li>
+                <li>
+                    <label for="item4">50</label>
+                </li>
+                <li>
+                    <label for="item5">10</label>
+                </li>
+            </ul>
+        </details>
+        <h3 class="inGameOptionLabel" style="margin-left: 2px; margin-right: 2px; transform: translateY(10%) translateX(-45%);">en</h3>
+        <details class="custom-select">
+            <summary class="radios">
+                <input type="radio" name="item2" id="defaultBis" title="..." checked>
+                <input type="radio" name="item2" id="item6" title="10">
+                <input type="radio" name="item2" id="item7" title="50">
+                <input type="radio" name="item2" id="item8" title="100">
+                <input type="radio" name="item2" id="item9" title="200">
+                <input type="radio" name="item2" id="item10" title="500">
+            </summary>
+            <ul class="list">
+                <li>
+                    <label for="item6">10</label>
+                </li>
+                <li>
+                    <label for="item7">50</label>
+                </li>
+                <li>
+                    <label for="item8">100</label>
+                </li>
+                <li>
+                    <label for="item9">200</label>
+                </li>
+                <li>
+                    <label for="item10">500</label>
+                </li>
+            </ul>
+        </details>
+        <div class="wrapperButtonClassic">
+            <a href="#" class="aButtonClassic" onclick="convert(document.getElementsByClassName('radios'))"><span>Convertir</span></a>
+        </div>
+    </div>
     <div id="inGameMenu" style="width: 100%; height: 100%; display: none;">
         <div id="inGameWrapper">
             <div id="inGamePokerTable"></div>
@@ -89,12 +151,12 @@
                 <li id="inGameCheckButton">Check</li>
                 <li id="inGameSuivreButton">Suivre</li>
                 <li id="inGameCoucherButton">Se coucher</li>
-                <li id="inGameTapisButton">TAPIS</li>
+                <li id="inGameTapisButton" onclick="doTapis()">TAPIS</li>
             </ul>
             <div id="inGameMainIU">
-                <h4 class="inGameMenuUI" id="inGameMenuUIName">Jean paul</h4>
-                <h4 class="inGameMenuUI" id="inGameMenuUIBets">Total 13589 $ - Mise 500 $</h4>
-                <h4 class="inGameMenuUI" id="inGameMenuUITime">Timer : 0m0s - Tour 15</h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUIName"></h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUIBets"></h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUITime">Timer : 0m0s - Tour </h4>
                 <h4 class="inGameMenuUI" id="inGameMenuUIStatus">Statut du joueur : Grosse Blind</h4>
             </div>
             <div class="testTokenPileBlack">
@@ -151,6 +213,13 @@
             .join('');
     });
 
+    window.addEventListener("keydown", function(evt) {
+        if (evt.keyCode == 27) {
+            $("#inGameOptionsDiv").hide("fast")
+            $("#inGameConversionDiv").hide("fast")
+        }
+    })
+
     var me
     var startDate
 
@@ -162,9 +231,11 @@
             console.log(players[i].id)
             if (players[i].id == myID) {
                 var me = players[i]
+                players[i].id = 0
             }
         }
-        document.getElementById("inGameMenuUIBets").innerText = "Total " + me.bank + " $ - Mise 0 $"
+        document.getElementById("inGameMenuUIBets").innerText = "En jeu : " + me.entryBet + " $ - Mise 0 $"
+        generateTokens(me.entryBet)
         $("#inGameMenu").show("fast")
         $("#preGameLobby").hide("fast")
         showCard(760, 450, 17, 0.48, "playerCard1")
@@ -178,6 +249,82 @@
         launchTimeClock()
         document.getElementsByClassName("inGameOptionMenuList")[3].innerText = "💲"
         status = "waiting for server"
+    }
+
+    //Black, Blue, Green, Red, Yellow
+    //500, 200, 100, 50, 10
+    function generateTokens(quantity) {
+        var tokens = [0, 0, 0, 0, 0]
+        var rest = quantity
+        var add500 = true
+        var add200 = true
+        switch (true) {
+            case quantity / 500 <= 3:
+                var add500 = false
+            case quantity / 200 <= 5:
+                var add200 = false
+        }
+        if (add500) {
+            var quantity500 = Math.floor(quantity / 500)
+            rest = quantity - quantity500 * 500
+        }
+        if (add200) {
+            var quantity200 = Math.floor(rest / 200)
+            rest = rest - quantity200 * 200
+        }
+        var quantity100 = Math.floor(rest / 100)
+        rest = rest - quantity100 * 100
+        var quantity50 = Math.floor(rest / 50)
+        rest = rest - quantity50 * 50
+        var quantity10 = Math.floor(rest / 10)
+        rest = rest - quantity10 * 10
+        console.log(quantity)
+        createTokenPile([quantity500, quantity200, quantity100, quantity50, quantity10])
+    }
+
+    function convert(inputs) {
+        const values = [500, 200, 100, 50, 10]
+        const colors = ["Black", "Blue", "Green", "Red", "Yellow"]
+        var tokens = [0, 0, 0, 0, 0]
+        var inputsChecked = []
+        for (inputGroup in inputs) {
+            for (input in inputs[inputGroup].children) {
+                if (inputs[inputGroup].children[input].checked) {
+                    inputsChecked.push(Number(inputs[inputGroup].children[input].title))
+                    break
+                }
+            }
+        }
+        var conversionRate = Math.max(...inputsChecked) / Math.min(...inputsChecked)
+        var firstColor = colors[values.indexOf(inputsChecked[0])]
+        var secondColor = colors[values.indexOf(inputsChecked[1])]
+        var quantityOfFirst = document.getElementById("testTokenCounter" + firstColor).innerText
+        var quantityOfSecond = document.getElementById("testTokenCounter" + secondColor).innerText
+        if (inputsChecked[0] > inputsChecked[1] && quantityOfFirst != 0) {
+            if (inputsChecked[0] == 500 && inputsChecked[1] == 200) {
+                tokens = [-1, 2, 1, 0, 0]
+            } else {
+                var indexOfFirst = values.indexOf(inputsChecked[0])
+                var indexOfSecond = values.indexOf(inputsChecked[1])
+                tokens[indexOfFirst] = -1
+                tokens[indexOfSecond] = 1 * conversionRate
+            }
+            createTokenPile(tokens)
+        } else if (inputsChecked[0] < inputsChecked[1] && quantityOfFirst - (1 * conversionRate) >= 0) {
+            var indexOfFirst = values.indexOf(inputsChecked[0])
+            var indexOfSecond = values.indexOf(inputsChecked[1])
+            tokens[indexOfFirst] = -(1 * conversionRate)
+            tokens[indexOfSecond] = 1
+            createTokenPile(tokens)
+        }
+    }
+
+    function toggleReady(state) {
+        var entryBet = document.getElementById("customBet").value
+        if (entryBet % 10 != 0) {
+            entryBet = Math.floor(entryBet / 10) * 10
+        }
+        send(`f__isReady(${myID},${state},${entryBet})__${myID}`)
     }
 
     function launchTimeClock() {
@@ -201,7 +348,6 @@
     }
 
     function handleInGameOptions() {
-        console.log(document.getElementById("inGameOptionsDiv").style.display)
         if (document.getElementById("inGameOptionsDiv").style.display != "none") {
             $("#inGameOptionsDiv").hide("fast")
         } else {
@@ -226,6 +372,28 @@
 
     }
 
+    function doTapis() {
+        const values = [500, 200, 100, 50, 10]
+        const colors = ["Black", "Blue", "Green", "Red", "Yellow"]
+        var totalTokens = 0
+        for (color in colors) {
+            var temp = document.getElementById("testTokenCounter" + colors[color]).innerText
+            document.getElementById("testTokenCounter" + colors[color]).innerText = 0
+            document.getElementsByClassName("testTokenPile" + colors[color])[0].innerHTML = `<h3 id="testTokenCounter${colors[color]}" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>`
+            totalTokens += temp * values[color]
+        }
+        send(`f__bet(${myID}, ${totalTokens})__${myID}`)
+    }
+
+    function handleConversion() {
+        console.log(document.getElementById("inGameConversionDiv").style.display)
+        if (document.getElementById("inGameConversionDiv").style.display != "none") {
+            $("#inGameConversionDiv").hide("fast")
+        } else {
+            $("#inGameConversionDiv").show("fast")
+        }
+    }
+
     function showCard(posX, posY, rotation, scale, Id) {
         var card = document.createElement("div")
         card.style.background = "url('resources/img/deck.png')"
@@ -239,7 +407,7 @@
         card.style.marginLeft = posX + "px"
         card.style.marginTop = posY + "px"
         card.style.position = "absolute"
-        card.style.transform = "rotate(" + rotation + "deg) scale(" + scale + ")"
+        card.style.transform = `rotate(${rotation}deg) scale(${scale})`
         card.style.border = "2px solid black"
         document.getElementById("inGameWrapper").insertBefore(card, document.querySelector(".testTokenPileBlack"))
     }
@@ -261,14 +429,18 @@
                 arr.push(0)
             }
         }
-        send("f__bet(" + myID + "," + values[color] + ")__" + myID)
+        send(`f__bet(${myID},${values[color]})__${myID}`)
         createTokenPile(arr)
     }
 
-    function updateBets(bet, bank, ID) {
+    function updateBets(bet, entryBet, ID) {
         if (ID == myID) {
-            document.getElementById("inGameMenuUIBets").innerText = `Total ${bank} $ - Mise ${bet} $`
+            document.getElementById("inGameMenuUIBets").innerText = `Total ${entryBet} $ - Mise ${bet} $`
         }
+    }
+
+    function backToLobby() {
+        location.reload()
     }
 
     //The array should be in order, aka [black, blue, green, red, yellow]
@@ -301,7 +473,7 @@
                 }
                 var token = document.createElement("div")
                 token.className = "testToken testToken" + classes[i]
-                token.setAttribute("onclick", "betHandler('" + classes[i] + "')")
+                token.setAttribute("onclick", `betHandler('${classes[i]}')`)
                 if (j > 15) {
                     var secondColumn = 260
                     token.style.top = 90 - (2.5 * (j - 15)) + "vh"
@@ -339,7 +511,7 @@
         document.getElementById("preGameLobbyMenu").append(isReadyStatus)
         if (document.getElementById("readyCheckbox").checked) {
             document.getElementById("readyCheckbox").checked = false
-            send("f__isReady(" + myID + ",false)__" + myID)
+            send(`f__isReady(${myID}, false)__${myID}`)
         }
 
         status = "pre-game lobby basic"

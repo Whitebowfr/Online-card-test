@@ -45,6 +45,9 @@ function messageHandler(mes) {
                 console.log(infoValues[1])
                 displayYourCards(infoValues[1])
                 break
+            case infoValues[0] == "yourData":
+                me = JSON.parse(infoValues[1])
+                break
         }
     }
     if (mes.includes("cmd__")) {
@@ -107,7 +110,7 @@ function setupAudio() {
         document.getElementById('music_player').addEventListener('ended', function() {
             musicIndicator++;
             var musicArray = ["Kahoot Medieval", "Dirt Rally"]
-            nextSong = "resources/musics/" + musicArray[musicIndicator] + ".mp3";
+            nextSong = `resources/musics/${musicArray[musicIndicator]}.mp3`
             audioPlayer = document.getElementById('music_player');
             audioPlayer.src = nextSong;
             audioPlayer.load();
@@ -116,7 +119,7 @@ function setupAudio() {
                 musicIndicator = 0;
             }
         }, false);
-    } else if (localStorage.getItem("musicPlayingOnStart") == "false") {
+    } else if (localStorage.getItem("musicPlayingOnStart") == "false") { //Fuck booleans
         audio(false)
     }
 }

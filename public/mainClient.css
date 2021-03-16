@@ -563,7 +563,7 @@ ul li#inGameTapisButton:hover {
 
 #inGameOptionMenu {
     position: absolute;
-    width: 200px;
+    width: 210px;
     height: 40px;
     background-color: white;
     border-radius: 0 0 5px 0;
@@ -581,6 +581,19 @@ ul li#inGameTapisButton:hover {
 }
 
 #inGameOptionsDiv {
+    position: absolute;
+    z-index: 999;
+    left: 50vw;
+    top: 50vh;
+    border-radius: 15px 15px 15px 15px;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: white;
+    width: 40%;
+    height: 50%;
+    display: none;
+}
+
+#inGameConversionDiv {
     position: absolute;
     z-index: 999;
     left: 50vw;
@@ -648,4 +661,173 @@ input:checked+.slider:before {
     display: inline-block;
     margin-left: 10px;
     transform: translateY(-10px);
+}
+
+.wrapperButtonClassic {
+    position: relative;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.aButtonClassic {
+    display: block;
+    width: 130px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 18px;
+    font-family: sans-serif;
+    text-decoration: none;
+    color: #333;
+    border: 2px solid #333;
+    letter-spacing: 2px;
+    text-align: center;
+    position: relative;
+    transition: all .35s;
+}
+
+.aButtonClassic span {
+    position: relative;
+    z-index: 2;
+}
+
+.aButtonClassic:after {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: #ff003b;
+    transition: all .35s;
+}
+
+.aButtonClassic:hover {
+    color: #fff;
+}
+
+.aButtonClassic:hover:after {
+    width: 100%;
+}
+
+#inGameConversionDiv {
+    padding: 15px;
+    height: 8%;
+    text-align: center;
+    width: 35%;
+}
+
+details.custom-select {
+    position: relative;
+    width: 200px;
+    margin-right: 1rem;
+    display: inline-block;
+}
+
+details.custom-select[open] {
+    z-index: 1;
+}
+
+summary.radios {
+    padding: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #ddd;
+    list-style: none;
+}
+
+summary.radios::-webkit-details-marker {
+    display: none;
+}
+
+details.custom-select[open] summary.radios:before {
+    content: '';
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+summary.radios:after {
+    content: '';
+    display: inline-block;
+    float: right;
+    width: .5rem;
+    height: .5rem;
+    border-bottom: 1px solid currentColor;
+    border-left: 1px solid currentColor;
+    border-bottom-left-radius: 2px;
+    transform: rotate(45deg) translate(50%, 0%);
+    transform-origin: center center;
+    transition: transform ease-in-out 100ms
+}
+
+summary.radios:focus {
+    outline: none;
+}
+
+details.custom-select[open] summary.radios:after {
+    transform: rotate(-45deg) translate(0%, 0%);
+}
+
+ul.list {
+    width: 100%;
+    background: #ddd;
+    position: absolute;
+    top: calc(100% + .5rem);
+    left: 0;
+    padding: 1rem;
+    margin: 0;
+    box-sizing: border-box;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+}
+
+ul.list>li {
+    margin: 0;
+    padding: 1rem 0;
+    border-bottom: 1px solid #ccc;
+}
+
+ul.list>li:first-child {
+    padding-top: 0;
+}
+
+ul.list>li:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+summary.radios {
+    counter-reset: radios;
+}
+
+input[type=radio] {
+    counter-increment: radios;
+    appearance: none;
+    display: none;
+}
+
+input[type=radio]:checked {
+    display: inline;
+}
+
+input[type=radio]:after {
+    content: attr(title);
+    display: inline;
+    font-size: 1rem;
+}
+
+ul.list {
+    counter-reset: labels;
+}
+
+ul.list>li>label {
+    width: 100%;
+    display: block;
+    cursor: pointer;
 }
