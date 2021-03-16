@@ -1,45 +1,21 @@
 {
     "connectedIP": [
-        "::1",
         "::ffff:127.0.0.1"
     ],
     "correspondingID": [
-        599,
         69420
     ],
     "isReady": [],
     "waitingForGame": [],
     "usr": [{
-            "id": 69420,
-            "name": "",
-            "bank": 1000000000,
-            "hand": [],
-            "bet": 0,
-            "entryBet": 0,
-            "ws": ""
-        },
-        {
-            "id": 599,
-            "name": "Yeet70421",
-            "bank": 953450,
-            "hand": [
-                "Valet de coeur",
-                "7 de trefle"
-            ],
-            "bet": 500,
-            "entryBet": 2800,
-            "ws": ""
-        },
-        {
-            "id": 313,
-            "name": "",
-            "bank": 1000,
-            "hand": [],
-            "bet": 0,
-            "entryBet": 0,
-            "ws": ""
-        }
-    ],
+        "id": 69420,
+        "name": "",
+        "bank": 1000000000,
+        "hand": [],
+        "bet": 0,
+        "entryBet": 0,
+        "ws": ""
+    }],
     "currentGame": {
         "publicCards": [],
         "totalBetAmount": [],
