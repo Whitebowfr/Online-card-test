@@ -128,6 +128,7 @@ wss.on('connection', (ws, req) => {
             "entryBet": 0,
             "ws": ""
         }
+        webSockets[clientID] = ws
         data.usr.push(clientData)
     }
     console.log(readDatabase())
