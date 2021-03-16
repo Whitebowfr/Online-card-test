@@ -200,6 +200,7 @@ function updateDatabase(dataToWrite) {
 }
 
 function sendToSpecificUser(msg, ID) {
+    console.log("ws:", webSockets, "tout:", webSockets[ID])
     webSockets[ID].send(msg)
 }
 
