@@ -54,6 +54,7 @@ wss.on('connection', (ws, req) => {
                 data.usr[i].name = name
                 var modifiedData = data.usr[i]
                 modifiedData.id = 0
+                console.log(modifiedData)
                 sendM("info__yourData::" + JSON.stringify(modifiedData))
             }
             var waitingNames = []
@@ -122,7 +123,7 @@ wss.on('connection', (ws, req) => {
         var clientData = {
             "id": clientID,
             "name": "",
-            "bank": 1000,
+            "bank": 10000,
             "hand": [],
             "bet": 0,
             "entryBet": 0,

@@ -279,7 +279,7 @@
         var quantity10 = Math.floor(rest / 10)
         rest = rest - quantity10 * 10
         console.log(quantity)
-        createTokenPile([quantity500, quantity200, quantity100, quantity50, quantity10])
+        createTokenPile([quantity500 || 0, quantity200 || 0, quantity100 || 0, quantity50 || 0, quantity10 || 0])
     }
 
     function convert(inputs) {
