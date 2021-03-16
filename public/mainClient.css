@@ -563,7 +563,7 @@ ul li#inGameTapisButton:hover {
 
 #inGameOptionMenu {
     position: absolute;
-    width: 160px;
+    width: 200px;
     height: 40px;
     background-color: white;
     border-radius: 0 0 5px 0;

@@ -67,6 +67,7 @@
         <h3 class="inGameOptionMenuList" onclick="handleInGameOptions()">⚙️</h3>
         <h3 class="inGameOptionMenuList" style="cursor: pointer;" id="inGameOptionMenuAudio" onclick="handleInGameAudio(this.innerText)">🔊</h3>
         <h3 class="inGameOptionMenuList" style="font-size: 2rem;" onclick="handleInGameInfo()">ℹ️</h3>
+        <h3 class="inGameOptionMenuList" style="font-size: 2rem;" onclick="handleInGameInfo()">💲</h3>
     </div>
     <div id="inGameOptionsDiv" style="display: none;">
         <label class="switch" for="checkboxSound" style="display: inline-block;">
@@ -175,6 +176,7 @@
         showCard(1055, 135, 0, 0.35, "publicCard5")
         startDate = Date.now()
         launchTimeClock()
+        document.getElementsByClassName("inGameOptionMenuList")[3].innerText = "💲"
         status = "waiting for server"
     }
 
