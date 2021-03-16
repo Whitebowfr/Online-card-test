@@ -432,6 +432,7 @@ ul#inGameInteractionButtons {
 }
 
 ul#inGameInteractionButtons li {
+    user-select: none;
     display: inline-block;
     box-sizing: border-box;
     width: 10em;
@@ -497,6 +498,7 @@ ul li#inGameTapisButton:hover {
     top: 90vh;
     z-index: 15;
     position: absolute;
+    cursor: pointer;
 }
 
 #inGameMainIU {

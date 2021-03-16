@@ -68,21 +68,20 @@
         <h3 class="inGameOptionMenuList" style="cursor: pointer;" id="inGameOptionMenuAudio" onclick="handleInGameAudio(this.innerText)">🔊</h3>
         <h3 class="inGameOptionMenuList" style="font-size: 2rem;" onclick="handleInGameInfo()">ℹ️</h3>
     </div>
+    <div id="inGameOptionsDiv" style="display: none;">
+        <label class="switch" for="checkboxSound" style="display: inline-block;">
+            <input type="checkbox" id="checkboxSound" oninput="localStorage.setItem('musicPlayingOnStart', this.checked)" />
+            <div class="slider round"></div>
+          </label>
+        <h3 class="inGameOptionLabel">Auto launching of the music</h3>
+        <br>
+        <label class="switch" for="checkboxTokenLimit">
+            <input type="checkbox" id="checkboxTokenLimit" />
+            <div class="slider round"></div>
+          </label>
+        <h3 class="inGameOptionLabel">Fuck</h3>
+    </div>
     <div id="inGameMenu" style="width: 100%; height: 100%; display: none;">
-        <div id="inGameOptionsDiv" style="display: none;">
-            <label class="switch" for="checkboxSound" style="display: inline-block;">
-                <input type="checkbox" id="checkboxSound" oninput="localStorage.setItem('musicPlayingOnStart', this.checked)" />
-                <div class="slider round"></div>
-              </label>
-            <h3 class="inGameOptionLabel">Auto launching of the music</h3>
-            <br>
-            <label class="switch" for="checkboxTokenLimit">
-                <input type="checkbox" id="checkboxTokenLimit" />
-                <div class="slider round"></div>
-              </label>
-            <h3 class="inGameOptionLabel">Fuck</h3>
-
-        </div>
         <div id="inGameWrapper">
             <div id="inGamePokerTable"></div>
             <ul id="inGameInteractionButtons">
@@ -92,10 +91,10 @@
                 <li id="inGameTapisButton">TAPIS</li>
             </ul>
             <div id="inGameMainIU">
-                <h4 class="inGameMenuUI">Jean paul</h4>
-                <h4 class="inGameMenuUI">Total 13589 $ - Mise 500 $</h4>
-                <h4 class="inGameMenuUI">Timer : 15:08:82 - Tour 15</h4>
-                <h4 class="inGameMenuUI">Statut du joueur : Grosse Blind</h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUIName">Jean paul</h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUIBets">Total 13589 $ - Mise 500 $</h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUITime">Timer : 0m0s - Tour 15</h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUIStatus">Statut du joueur : Grosse Blind</h4>
             </div>
             <div class="testTokenPileBlack">
                 <h3 id="testTokenCounterBlack" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
@@ -151,15 +150,20 @@
             .join('');
     });
 
+    var me
+    var startDate
+
     function loadGame(players) {
-        console.log(players)
-        var myID = 599
-        for (var i = 0; i < JSON.parse(players).length; i++) {
-            if (JSON.parse(players)[i].id == myID) {
-                var myPlace = i
+        document.getElementsByClassName("area")[0].style.display = "none"
+        players = JSON.parse(players)
+        document.getElementById("inGameMenuUIName").innerText = document.getElementById("customName").value
+        for (var i = 0; i < players.length; i++) {
+            console.log(players[i].id)
+            if (players[i].id == myID) {
+                var me = players[i]
             }
         }
-        document.getElementsByClassName("area")[0].style.display = "none"
+        document.getElementById("inGameMenuUIBets").innerText = "Total " + me.bank + " $ - Mise 0 $"
         $("#inGameMenu").show("fast")
         $("#preGameLobby").hide("fast")
         showCard(760, 450, 17, 0.48)
@@ -169,8 +173,32 @@
         showCard(715, 135, 0, 0.35)
         showCard(885, 135, 0, 0.35)
         showCard(1055, 135, 0, 0.35)
+        startDate = Date.now()
+        launchTimeClock()
+        status = "waiting for server"
     }
 
+    function launchTimeClock() {
+
+        setTimeout(() => {
+            const millis = Date.now() - startDate;
+            var timeInSeconds = Math.floor(millis / 1000)
+            var minutes = Math.floor(timeInSeconds / 60)
+            timeInSeconds -= (Math.floor(Math.floor(millis / 1000) / 60)) * 60
+
+            document.getElementById("inGameMenuUITime").innerText = `Timer : ${minutes}m${timeInSeconds}s - Tour 15`
+            launchTimeClock()
+        }, 1000);
+    }
+
+    var serverWaiting = false
+
+    function ready() {
+        if (serverWaiting) {
+            send("f__nextStep()__" + myID)
+        }
+        serverWaiting = false
+    }
 
     function handleInGameOptions() {
         console.log(document.getElementById("inGameOptionsDiv").style.display)
@@ -212,6 +240,27 @@
         document.getElementById("inGameWrapper").insertBefore(card, document.querySelector(".testTokenPileBlack"))
     }
 
+    function betHandler(color) {
+        var values = {
+            "Black": 500,
+            "Blue": 200,
+            "Green": 100,
+            "Red": 50,
+            "Yellow": 10
+        }
+        var order = [500, 200, 100, 50, 10]
+        var arr = []
+        for (var i = 0; i < 5; i++) {
+            if (order.indexOf(values[color]) == i) {
+                arr.push(-1)
+            } else {
+                arr.push(0)
+            }
+        }
+        createTokenPile(arr)
+        send("f__bet(" + myID + "," + values[color] + ")__" + myID)
+    }
+
     //The array should be in order, aka [black, blue, green, red, yellow]
     function createTokenPile(array) {
         var classes = ["Black", "Blue", "Green", "Red", "Yellow"]
@@ -225,7 +274,7 @@
                 } else {
                     var numberOfTokensToRemove = Math.abs(array[i])
                 }
-                if (numberOfTokensToRemove > numberOfTokens) {
+                if (numberOfTokens - numberOfTokensToRemove < 0) {
                     var numberOfTokensToRemove = numberOfTokens
                 }
                 console.log("Number of tokens to remove:", numberOfTokensToRemove)
@@ -243,6 +292,7 @@
                 }
                 var token = document.createElement("div")
                 token.className = "testToken testToken" + classes[i]
+                token.setAttribute("onclick", "betHandler('" + classes[i] + "')")
                 if (j > 15) {
                     var secondColumn = 260
                     token.style.top = 90 - (2.5 * (j - 15)) + "vh"

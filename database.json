@@ -15,21 +15,30 @@
             "name": "",
             "bank": 1000000000,
             "hand": [],
-            "bet": 0
+            "bet": 0,
+            "ws": ""
         },
         {
             "id": 599,
-            "name": "Yeet69421dd",
-            "bank": 1000,
+            "name": "Yeet70421",
+            "bank": 97,
             "hand": [],
-            "bet": 0
+            "bet": 0,
+            "ws": ""
         },
         {
             "id": 313,
             "name": "",
             "bank": 1000,
             "hand": [],
-            "bet": 0
+            "bet": 0,
+            "ws": ""
         }
-    ]
+    ],
+    "currentGame": {
+        "publicCards": [],
+        "totalBetAmount": [],
+        "spectatorsID": [],
+        "turn": 0
+    }
 }

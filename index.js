@@ -10,13 +10,14 @@ const server = express()
 
 const { Server } = require('ws');
 const wss = new Server({ server });
+var webSockets = {}
 
 var clientID = 0
 var data = readDatabase()
 var clientsReady = 0
 data.waitingForGame = []
 updateDatabase(data)
-const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady"]
+const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady", "sendToSpecificUser", "nextStep"]
 
 resetDatabase()
 
@@ -96,7 +97,9 @@ wss.on('connection', (ws, req) => {
                 var name = data.usr[i].name
             }
         }
+        webSockets[data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]] = ws
         sendM("info__yourName::" + name)
+
     } else {
         clientID = Math.round(Math.random() * 1000)
         data.connectedIP.push(getAdressIp(req))
@@ -142,7 +145,7 @@ wss.on('connection', (ws, req) => {
         }
 
         console.log("disconnected ID:", disconnectedID)
-
+        delete webSockets[disconnectedID]
         updateDatabase(data)
         updatePlayersInLobby(waitingNames)
     }
@@ -177,6 +180,10 @@ function sendGlobal(mes) {
 
 function updateDatabase(dataToWrite) {
     fs.writeFileSync("database.json", JSON.stringify(dataToWrite, null, 4))
+}
+
+function sendToSpecificUser(msg, ID) {
+    webSockets[ID].send(msg)
 }
 
 class Deck {
@@ -365,6 +372,10 @@ function resetGame() {
         data.usr[i].hand = []
         data.usr[i].bet = 0
     }
+    data.currentGame.publicCards = []
+    data.currentGame.totalBetAmount = []
+    data.currentGame.spectatorsID = []
+    data.currentGame.turn = 0
     deck = new Deck()
     updateDatabase(data)
 }
@@ -375,15 +386,17 @@ function resetDatabase() {
     data.waitingForGame = []
 }
 
+var playingPlayers = []
+var playingPlayerTurn = 0
+
 function startGame() {
     console.log("Game started")
     resetGame();
     data = readDatabase()
-    var playingPlayers = []
     console.log("players waiting :", data.waitingForGame)
-    for (player in data.waitingForGame) {
+    for (var j = 0; j < data.waitingForGame.length; j++) {
         for (var i = 0; i < data.usr.length; i++) {
-            if (data.usr[i].id == data.waitingForGame[player]) {
+            if (data.usr[i].id == data.waitingForGame[j]) {
                 playingPlayers.push(data.usr[i])
             }
         }
@@ -391,6 +404,28 @@ function startGame() {
     playingPlayers = shuffle(playingPlayers)
     console.log("playing players : ", playingPlayers)
     sendGlobal("info__gameStartedWith::" + JSON.stringify(playingPlayers))
+    data.isReady = []
+    data.waitingForGame = []
+    updateDatabase(data)
+}
+
+function nextStep() {
+    playingPlayerTurn++
+    sendToSpecificUser("info__yourTurn::" + playingPlayers[playingPlayerTurn--].bet, playingPlayers[playingPlayerTurn].id)
+    if (playerPlayerTurn >= playingPlayers.length) {
+        playerPlayerTurn = 0
+    }
+    if (playingPlayers.every((val, i, arr) => val.bet === arr[0].bet || val.bank === 0)) {
+        combineBets(playingPlayers)
+    }
+}
+
+function combineBets(playerPlayers) {
+    var data = readDatabase()
+    for (var i = 0; i < playerPlayers; i++) {
+        data.currentGame.totalBetAmount += playerPlayers[i].bet
+    }
+    updateDatabase(data)
 }
 
 function shuffle(a) {
