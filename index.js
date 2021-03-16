@@ -44,6 +44,7 @@ wss.on('connection', (ws, req) => {
     var waitingNames = []
 
     function connectToGame(name, ID) {
+        console.log(name, ID)
         var data = readDatabase()
         if (data.waitingForGame.indexOf(ID) == -1) {
             data.waitingForGame.push(ID)
@@ -129,6 +130,7 @@ wss.on('connection', (ws, req) => {
         }
         data.usr.push(clientData)
     }
+    console.log(readDatabase())
 
     updateDatabase(data)
 
