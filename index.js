@@ -359,7 +359,7 @@ function drawCard(ID) {
                 return false
             } else {
                 data.usr[i].hand.push(carte.card)
-                console.log(data.usr[i].hand[data.usr[i].hand.length - 1])
+                console.log(data.usr[i].hand)
             }
         }
     }
@@ -404,6 +404,18 @@ function startGame() {
     playingPlayers = shuffle(playingPlayers)
     console.log("playing players : ", playingPlayers)
     sendGlobal("info__gameStartedWith::" + JSON.stringify(playingPlayers))
+    for (var i = 0; i < playingPlayers.length; i++) {
+        drawCard(playingPlayers[i].id)
+        drawCard(playingPlayers[i].id)
+        var data = readDatabase()
+        for (var j = 0; j < data.usr.length; j++) {
+            if (data.usr[j].id == playingPlayers[i].id) {
+                var me = data.usr[j]
+                break
+            }
+        }
+        sendToSpecificUser("info__yourCards::" + JSON.stringify(me.hand), playingPlayers[i].id)
+    }
     data.isReady = []
     data.waitingForGame = []
     updateDatabase(data)
@@ -444,6 +456,7 @@ function bet(ID, amount) {
     if (amount <= 0) {
         return false
     }
+    var me
     for (var i = 0; i < data.usr.length; i++) {
         if (data.usr[i].id == ID) {
             if (data.usr[i].bank >= amount) {
@@ -452,9 +465,11 @@ function bet(ID, amount) {
             } else {
                 return false
             }
+            me = data.usr[i]
         }
     }
     updateDatabase(data)
+    sendGlobal(`cmd__updateBets(${me.bet}, ${me.bank}, ${ID})`)
 }
 
 resetGame()

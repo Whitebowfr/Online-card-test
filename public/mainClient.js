@@ -41,8 +41,25 @@ function messageHandler(mes) {
             case infoValues[0] == "yourTurn" && status == "waiting for server":
                 serverWaiting = true
                 break
+            case infoValues[0] == "yourCards" && status == "waiting for server":
+                console.log(infoValues[1])
+                displayYourCards(infoValues[1])
+                break
         }
     }
+    if (mes.includes("cmd__")) {
+        console.log(mes.split("__")[1])
+        eval(mes.split("__")[1])
+    }
+}
+
+function displayYourCards(cards) {
+    cards = JSON.parse(cards)
+    console.log(cards[0])
+    console.log(getCard("position", cards[0]))
+    console.log(cards[1], getCard("position", cards[1]))
+    document.getElementById("playerCard1").style.backgroundPosition = -446 * getCard("position", cards[0]) + "px"
+    document.getElementById("playerCard2").style.backgroundPosition = -446 * getCard("position", cards[1]) + "px"
 }
 
 function replaceAt(string, index, replace) {
@@ -112,4 +129,125 @@ function generateName() {
 
     var name = (capFirst(name2[getRandomInt(0, name2.length + 1)]) + ' ' + capFirst(name1[getRandomInt(0, name1.length + 1)])).replace("  ", " ");
     return name;
+}
+
+function getCard(type, cardToGet) {
+    const cardsValues = {
+        'As de coeur': 1,
+        '2 de coeur': 2,
+        '3 de coeur': 3,
+        '4 de coeur': 4,
+        '5 de coeur': 5,
+        '6 de coeur': 6,
+        '7 de coeur': 7,
+        '8 de coeur': 8,
+        '9 de coeur': 9,
+        '10 de coeur': 10,
+        'Valet de coeur': 11,
+        'Dame de coeur': 12,
+        'Roi de coeur': 13,
+        'As de carreau': 1,
+        '2 de carreau': 2,
+        '3 de carreau': 3,
+        '4 de carreau': 4,
+        '5 de carreau': 5,
+        '6 de carreau': 6,
+        '7 de carreau': 7,
+        '8 de carreau': 8,
+        '9 de carreau': 9,
+        '10 de carreau': 10,
+        'Valet de carreau': 11,
+        'Dame de carreau': 12,
+        'Roi de carreau': 13,
+        'As de pique': 1,
+        '2 de pique': 2,
+        '3 de pique': 3,
+        '4 de pique': 4,
+        '5 de pique': 5,
+        '6 de pique': 6,
+        '7 de pique': 7,
+        '8 de pique': 8,
+        '9 de pique': 9,
+        '10 de pique': 10,
+        'Valet de pique': 11,
+        'Dame de pique': 12,
+        'Roi de pique': 13,
+        'As de trefle': 1,
+        '2 de trefle': 2,
+        '3 de trefle': 3,
+        '4 de trefle': 4,
+        '5 de trefle': 5,
+        '6 de trefle': 6,
+        '7 de trefle': 7,
+        '8 de trefle': 8,
+        '9 de trefle': 9,
+        '10 de trefle': 10,
+        'Valet de trefle': 11,
+        'Dame de trefle': 12,
+        'Roi de trefle': 13
+    }
+    const otherCardsValues = {
+        'As de coeur': 1,
+        '2 de coeur': 2,
+        '3 de coeur': 3,
+        '4 de coeur': 4,
+        '5 de coeur': 5,
+        '6 de coeur': 6,
+        '7 de coeur': 7,
+        '8 de coeur': 8,
+        '9 de coeur': 9,
+        '10 de coeur': 10,
+        'Valet de coeur': 11,
+        'Dame de coeur': 12,
+        'Roi de coeur': 13,
+        'As de carreau': 14,
+        '2 de carreau': 15,
+        '3 de carreau': 16,
+        '4 de carreau': 17,
+        '5 de carreau': 18,
+        '6 de carreau': 19,
+        '7 de carreau': 20,
+        '8 de carreau': 21,
+        '9 de carreau': 22,
+        '10 de carreau': 23,
+        'Valet de carreau': 24,
+        'Dame de carreau': 25,
+        'Roi de carreau': 26,
+        'As de pique': 27,
+        '2 de pique': 28,
+        '3 de pique': 29,
+        '4 de pique': 30,
+        '5 de pique': 31,
+        '6 de pique': 32,
+        '7 de pique': 33,
+        '8 de pique': 34,
+        '9 de pique': 35,
+        '10 de pique': 36,
+        'Valet de pique': 37,
+        'Dame de pique': 38,
+        'Roi de pique': 39,
+        'As de trefle': 40,
+        '2 de trefle': 41,
+        '3 de trefle': 42,
+        '4 de trefle': 43,
+        '5 de trefle': 44,
+        '6 de trefle': 45,
+        '7 de trefle': 46,
+        '8 de trefle': 47,
+        '9 de trefle': 48,
+        '10 de trefle': 49,
+        'Valet de trefle': 50,
+        'Dame de trefle': 51,
+        'Roi de trefle': 52
+    }
+    var suits = { 'coeur': 0, 'carreau': 13, 'pique': 39, 'trefle': 26 }
+    var cardColor = cardToGet.split(" ")[2]
+    var cardValue = cardToGet.split(" ")[0]
+    if (type == "position") {
+        var returnedValue = Number(suits[cardColor]) + Number(cardsValues[cardToGet])
+        return returnedValue
+    }
+    if (type == "value") {
+        return cardsValues[cardValue]
+    }
 }

@@ -166,26 +166,24 @@
         document.getElementById("inGameMenuUIBets").innerText = "Total " + me.bank + " $ - Mise 0 $"
         $("#inGameMenu").show("fast")
         $("#preGameLobby").hide("fast")
-        showCard(760, 450, 17, 0.48)
-        showCard(635, 450, -17, 0.48)
-        showCard(375, 135, 0, 0.35)
-        showCard(545, 135, 0, 0.35)
-        showCard(715, 135, 0, 0.35)
-        showCard(885, 135, 0, 0.35)
-        showCard(1055, 135, 0, 0.35)
+        showCard(760, 450, 17, 0.48, "playerCard1")
+        showCard(635, 450, -17, 0.48, "playerCard2")
+        showCard(375, 135, 0, 0.35, "publicCard1")
+        showCard(545, 135, 0, 0.35, "publicCard2")
+        showCard(715, 135, 0, 0.35, "publicCard3")
+        showCard(885, 135, 0, 0.35, "publicCard4")
+        showCard(1055, 135, 0, 0.35, "publicCard5")
         startDate = Date.now()
         launchTimeClock()
         status = "waiting for server"
     }
 
     function launchTimeClock() {
-
         setTimeout(() => {
             const millis = Date.now() - startDate;
             var timeInSeconds = Math.floor(millis / 1000)
             var minutes = Math.floor(timeInSeconds / 60)
             timeInSeconds -= (Math.floor(Math.floor(millis / 1000) / 60)) * 60
-
             document.getElementById("inGameMenuUITime").innerText = `Timer : ${minutes}m${timeInSeconds}s - Tour 15`
             launchTimeClock()
         }, 1000);
@@ -226,17 +224,21 @@
 
     }
 
-    function showCard(posX, posY, rotation, scale) {
+    function showCard(posX, posY, rotation, scale, Id) {
         var card = document.createElement("div")
-        card.style.background = "url('resources/img/testCard.png')"
+        card.style.background = "url('resources/img/deck.png')"
         card.style.backgroundRepeat = "no-repeat"
         card.style.backgroundSize = "cover"
         card.style.height = "624px"
         card.style.width = "440px"
+        card.id = Id
+        card.style.borderRadius = "15px 15px 15px 15px"
+        card.style.backgroundPosition = "0px"
         card.style.marginLeft = posX + "px"
         card.style.marginTop = posY + "px"
         card.style.position = "absolute"
         card.style.transform = "rotate(" + rotation + "deg) scale(" + scale + ")"
+        card.style.border = "2px solid black"
         document.getElementById("inGameWrapper").insertBefore(card, document.querySelector(".testTokenPileBlack"))
     }
 
@@ -257,8 +259,14 @@
                 arr.push(0)
             }
         }
-        createTokenPile(arr)
         send("f__bet(" + myID + "," + values[color] + ")__" + myID)
+        createTokenPile(arr)
+    }
+
+    function updateBets(bet, bank, ID) {
+        if (ID == myID) {
+            document.getElementById("inGameMenuUIBets").innerText = `Total ${bank} $ - Mise ${bet} $`
+        }
     }
 
     //The array should be in order, aka [black, blue, green, red, yellow]
@@ -268,7 +276,6 @@
             var numberOfTokens = Number(document.getElementById("testTokenCounter" + classes[i]).innerText) || 0
             var secondColumn = 0
             if (array[i] < 0) {
-                console.log(array[i])
                 if (numberOfTokens > 58) {
                     var numberOfTokensToRemove = Math.abs(array[i]) - (numberOfTokens - 58)
                 } else {
@@ -277,11 +284,11 @@
                 if (numberOfTokens - numberOfTokensToRemove < 0) {
                     var numberOfTokensToRemove = numberOfTokens
                 }
-                console.log("Number of tokens to remove:", numberOfTokensToRemove)
+                //console.log("Number of tokens to remove:", numberOfTokensToRemove)
                 var tokensToRemove = document.querySelectorAll(".testTokenPile" + classes[i] + " > div")
-                console.log("Elements to remove", tokensToRemove)
+                    //console.log("Elements to remove", tokensToRemove)
                 for (var k = numberOfTokensToRemove; k > 0; k--) {
-                    console.log(numberOfTokensToRemove - k)
+                    //console.log(numberOfTokensToRemove - k)
                     var currentChildren = tokensToRemove[tokensToRemove.length - k]
                     document.getElementsByClassName("testTokenPile" + classes[i])[0].removeChild(currentChildren)
                 }

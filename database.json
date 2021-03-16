@@ -21,8 +21,11 @@
         {
             "id": 599,
             "name": "Yeet70421",
-            "bank": 97,
-            "hand": [],
+            "bank": 995700,
+            "hand": [
+                "4 de carreau",
+                "Roi de trefle"
+            ],
             "bet": 0,
             "ws": ""
         },
