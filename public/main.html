@@ -150,7 +150,7 @@
             <ul id="inGameInteractionButtons">
                 <li id="inGameCheckButton">Check</li>
                 <li id="inGameSuivreButton">Suivre</li>
-                <li id="inGameCoucherButton">Se coucher</li>
+                <li id="inGameCoucherButton" onclick="handleCoucher()">Se coucher</li>
                 <li id="inGameTapisButton" onclick="doTapis()">TAPIS</li>
             </ul>
             <div id="inGameMainIU">
@@ -175,19 +175,19 @@
                 <h3 id="testTokenCounterYellow" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
             </div>
             <div id="temporaryButtons" style="margin-left: 40vw">
-                <input type="button" value="add 10" onclick="createTokenPile([0,0,0,0,1])">
-                <input type="button" value="add 50" onclick="createTokenPile([0,0,0,1,0])">
-                <input type="button" value="add 100" onclick="createTokenPile([0,0,1,0,0])">
-                <input type="button" value="add 200" onclick="createTokenPile([0,1,0,0,0])">
-                <input type="button" value="add 500" onclick="createTokenPile([1,0,0,0,0])">
-                <input type="button" value="add 5 of each" onclick="createTokenPile([5,5,5,5,5])">
+                <input type="button" value="add 10" onclick="createTokenPile([0,0,0,0,1], myID)">
+                <input type="button" value="add 50" onclick="createTokenPile([0,0,0,1,0]), myID">
+                <input type="button" value="add 100" onclick="createTokenPile([0,0,1,0,0]), myID">
+                <input type="button" value="add 200" onclick="createTokenPile([0,1,0,0,0]), myID">
+                <input type="button" value="add 500" onclick="createTokenPile([1,0,0,0,0]), myID">
+                <input type="button" value="add 5 of each" onclick="createTokenPile([5,5,5,5,5]), myID">
                 <br>
-                <input type="button" value="remove 10" onclick="createTokenPile([0,0,0,0,-1])">
-                <input type="button" value="remove 50" onclick="createTokenPile([0,0,0, -1,0])">
-                <input type="button" value="remove 100" onclick="createTokenPile([0,0,-1,0,0])">
-                <input type="button" value="remove 200" onclick="createTokenPile([0,-1,0,0,0])">
-                <input type="button" value="remove 500" onclick="createTokenPile([-1,0,0,0,0])">
-                <input type="button" value="remove 5 of each" onclick="createTokenPile([-5,-5,-5,-5,-5])">
+                <input type="button" value="remove 10" onclick="createTokenPile([0,0,0,0,-1]), myID">
+                <input type="button" value="remove 50" onclick="createTokenPile([0,0,0, -1,0]), myID">
+                <input type="button" value="remove 100" onclick="createTokenPile([0,0,-1,0,0]), myID">
+                <input type="button" value="remove 200" onclick="createTokenPile([0,-1,0,0,0]), myID">
+                <input type="button" value="remove 500" onclick="createTokenPile([-1,0,0,0,0]), myID">
+                <input type="button" value="remove 5 of each" onclick="createTokenPile([-5,-5,-5,-5,-5]), myID">
             </div>
         </div>
     </div>
@@ -279,7 +279,7 @@
         var quantity10 = Math.floor(rest / 10)
         rest = rest - quantity10 * 10
         console.log(quantity)
-        createTokenPile([quantity500 || 0, quantity200 || 0, quantity100 || 0, quantity50 || 0, quantity10 || 0])
+        createTokenPile([quantity500 || 0, quantity200 || 0, quantity100 || 0, quantity50 || 0, quantity10 || 0], myID)
     }
 
     function convert(inputs) {
@@ -309,13 +309,13 @@
                 tokens[indexOfFirst] = -1
                 tokens[indexOfSecond] = 1 * conversionRate
             }
-            createTokenPile(tokens)
+            createTokenPile(tokens, myID)
         } else if (inputsChecked[0] < inputsChecked[1] && quantityOfFirst - (1 * conversionRate) >= 0) {
             var indexOfFirst = values.indexOf(inputsChecked[0])
             var indexOfSecond = values.indexOf(inputsChecked[1])
             tokens[indexOfFirst] = -(1 * conversionRate)
             tokens[indexOfSecond] = 1
-            createTokenPile(tokens)
+            createTokenPile(tokens, myID)
         }
     }
 
@@ -339,6 +339,7 @@
     }
 
     var serverWaiting = false
+
 
     function ready() {
         if (serverWaiting) {
@@ -372,7 +373,17 @@
 
     }
 
+    function handleCoucher() {
+        document.getElementById("playerCard1").style.backgroundPosition = "0px"
+        document.getElementById("playerCard2").style.backgroundPosition = "0px"
+        send(`f__couche(${myID})__${myID}`)
+        ready()
+    }
+
     function doTapis() {
+        if (!serverWaiting) {
+            return false
+        }
         const values = [500, 200, 100, 50, 10]
         const colors = ["Black", "Blue", "Green", "Red", "Yellow"]
         var totalTokens = 0
@@ -382,6 +393,7 @@
             document.getElementsByClassName("testTokenPile" + colors[color])[0].innerHTML = `<h3 id="testTokenCounter${colors[color]}" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>`
             totalTokens += temp * values[color]
         }
+        ready()
         send(`f__bet(${myID}, ${totalTokens})__${myID}`)
     }
 
@@ -413,6 +425,9 @@
     }
 
     function betHandler(color) {
+        if (!serverWaiting) {
+            return false
+        }
         var values = {
             "Black": 500,
             "Blue": 200,
@@ -430,7 +445,7 @@
             }
         }
         send(`f__bet(${myID},${values[color]})__${myID}`)
-        createTokenPile(arr)
+        createTokenPile(arr, myID)
     }
 
     function updateBets(bet, entryBet, ID) {
@@ -444,7 +459,10 @@
     }
 
     //The array should be in order, aka [black, blue, green, red, yellow]
-    function createTokenPile(array) {
+    function createTokenPile(array, ID) {
+        if (ID != myID) {
+            return false
+        }
         var classes = ["Black", "Blue", "Green", "Red", "Yellow"]
         for (var i = 0; i < array.length; i++) {
             var numberOfTokens = Number(document.getElementById("testTokenCounter" + classes[i]).innerText) || 0

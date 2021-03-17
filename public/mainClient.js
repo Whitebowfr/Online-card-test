@@ -28,6 +28,7 @@ function messageHandler(mes) {
             case infoValues[0] == "playersInQueue" && (status == "connecting" || status == "pre-game lobby basic"):
                 if (status != "pre-game lobby basic") {
                     showPreGameLobby(JSON.parse(infoValues[1]), infoValues[2])
+                    console.log(infoValues)
                 } else if (status == "pre-game lobby basic") {
                     updatePreGameReady(JSON.parse(infoValues[1]), infoValues[2])
                 }
@@ -40,6 +41,7 @@ function messageHandler(mes) {
                 break
             case infoValues[0] == "yourTurn" && status == "waiting for server":
                 serverWaiting = true
+                waitForPlay(infoValues[1])
                 break
             case infoValues[0] == "yourCards" && status == "waiting for server":
                 console.log(infoValues[1])

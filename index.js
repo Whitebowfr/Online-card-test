@@ -15,6 +15,7 @@ var webSockets = {}
 var clientID = 0
 var data = readDatabase()
 var clientsReady = 0
+const currentServerID = Math.round(Math.random() * 10000000)
 data.waitingForGame = []
 updateDatabase(data)
 const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady", "sendToSpecificUser", "nextStep"]
@@ -49,25 +50,24 @@ wss.on('connection', (ws, req) => {
         if (data.waitingForGame.indexOf(ID) == -1) {
             data.waitingForGame.push(ID)
         }
+        var waitingNames = []
         for (var i = 0; i < data.usr.length; i++) {
+
+            if (data.waitingForGame.includes(Number(data.usr[i].id))) {
+                if (data.usr[i].name != name) {
+                    data.usr[i].name = name
+                }
+                waitingNames.push(data.usr[i].name)
+            }
+
             if (data.usr[i].id == ID) {
                 data.usr[i].name = name
                 var modifiedData = data.usr[i]
-                modifiedData.id = 0
-                console.log(modifiedData)
                 sendM("info__yourData::" + JSON.stringify(modifiedData))
             }
-            var waitingNames = []
-            for (id in data.waitingForGame) {
-                for (var i = 0; i < data.usr.length; i++) {
-                    if (data.usr[i].id == data.waitingForGame[id]) {
-                        waitingNames.push(data.usr[i].name)
-                    }
-                }
-            }
-            updatePlayersInLobby(waitingNames)
-            updateDatabase(data)
         }
+        updatePlayersInLobby(waitingNames)
+        updateDatabase(data)
     }
 
     function isReady(ID, state, entryBet) {
@@ -370,18 +370,22 @@ class Card {
 
 var deck = new Deck()
 
-function drawCard(ID) {
+function drawCard(ID, serverID) {
     var carte = new Card(deck.draw())
     var data = readDatabase()
-    for (var i = 0; i < data.usr.length; i++) {
-        if (data.usr[i].id == ID) {
-            if (data.usr[i].hand.length >= 2) {
-                return false
-            } else {
-                data.usr[i].hand.push(carte.card)
-                console.log(data.usr[i].hand)
+    if (serverID == "" || serverID == null || serverID == undefined) {
+        for (var i = 0; i < data.usr.length; i++) {
+            if (data.usr[i].id == ID) {
+                if (data.usr[i].hand.length >= 2) {
+                    return false
+                } else {
+                    data.usr[i].hand.push(carte.card)
+                    console.log(data.usr[i].hand)
+                }
             }
         }
+    } else if (serverID == currentServerID) {
+        data.currentGame.publicCards.push(carte.card)
     }
     updateDatabase(data)
 }
