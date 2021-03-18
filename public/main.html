@@ -338,6 +338,7 @@
     }
 
     function updateTurns(turn) {
+        document.getElementById("inGameMenuUIBets").innerText = document.getElementById("inGameMenuUIBets").innerText.split(" - ")[0] + " - Mise 0 $"
         document.getElementById("inGameMenuUITime").innerText = document.getElementById("inGameMenuUITime").innerText.split(" - ")[0] + " - Tour " + turn
     }
 
@@ -437,7 +438,6 @@
         if (parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" - ")[1].replace("Mise ", "").replace(" $", "")) < previousBet) {
             return false
         }
-        document.getElementById("inGameMenuUIBets").innerText = document.getElementById("inGameMenuUIBets").innerText.split(" - ")[0] + " - Mise 0 $"
         send(`f__finishedMyTurn(${myID})__${myID}`)
     }
 
