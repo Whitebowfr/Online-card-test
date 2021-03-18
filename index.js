@@ -53,15 +53,14 @@ wss.on('connection', (ws, req) => {
         }
         var waitingNames = []
         for (var i = 0; i < data.usr.length; i++) {
-
-            if (data.waitingForGame.includes(Number(data.usr[i].id))) {
-                waitingNames.push(data.usr[i].name)
-            }
-
             if (data.usr[i].id == ID) {
                 data.usr[i].name = name
                 var modifiedData = data.usr[i]
                 sendM("info__yourData::" + JSON.stringify(modifiedData))
+            }
+
+            if (data.waitingForGame.includes(Number(data.usr[i].id))) {
+                waitingNames.push(data.usr[i].name)
             }
         }
         updatePlayersInLobby(waitingNames)
