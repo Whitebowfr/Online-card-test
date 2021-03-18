@@ -79,10 +79,10 @@
         <h3 class="inGameOptionLabel">Auto launching of the music</h3>
         <br>
         <label class="switch" for="checkboxTokenLimit">
-            <input type="checkbox" id="checkboxTokenLimit" />
+            <input type="checkbox" id="checkboxTokenLimit" checked oninput="localStorage.setItem('limitTokens', this.checked)"/>
             <div class="slider round"></div>
           </label>
-        <h3 class="inGameOptionLabel">Fuck</h3>
+        <h3 class="inGameOptionLabel">Limiter le nombre de jetons montrés à 30</h3>
     </div>
     <div id="inGameConversionDiv" style="display: none;" class="inGameOptions">
         <details class="custom-select">
@@ -185,6 +185,12 @@
     if (localStorage.getItem("musicPlayingOnStart") == "false") {
         document.getElementById("checkboxSound").checked = false
         document.getElementById("inGameOptionMenuAudio").innerText = "🔇"
+    }
+    if (localStorage.getItem("limitTokens") == undefined) {
+        localStorage.setItem("limitTokens", true)
+    }
+    if (!localStorage.getItem("limitTokens")) {
+        document.getElementById("checkboxTokenLimit").checked = false
     }
     const inputs = document.querySelectorAll('.form-control input');
     const labels = document.querySelectorAll('.form-control label');
@@ -542,6 +548,9 @@
                 }
             }
             for (var j = numberOfTokens; j < array[i] + numberOfTokens; j++) {
+                if (localStorage.getItem("limitTokens") && j > 30) {
+                    break
+                }
                 if (token != null && !checkVisible(token) && j != 0) {
                     break
                 }
