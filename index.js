@@ -475,7 +475,7 @@ function finishedMyTurn(ID) {
         for (var i = 0; i < updatedPlayingPlayers.length; i++) {
             for (var j = 0; j < data.usr.length; j++) {
                 console.log("is ", data.usr[j].id, " is equal to ", updatedPlayingPlayers[i].id, "his hand:", data.usr[j].hand)
-                if (data.usr[j].id == updatedPlayingPlayers[i].id && (data.usr[j].hand == [] || data.usr[j].hand == undefined)) {
+                if (data.usr[j].id == updatedPlayingPlayers[i].id && data.usr[j].hand.length == 0) {
                     data.usr[j].hand.push(drawCard())
                     data.usr[j].hand.push(drawCard())
                     console.log("player:", data.usr[j].id, "his cards:", data.usr[j].hand)
