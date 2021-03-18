@@ -459,7 +459,8 @@ ul li#inGameSuivreButton {
 }
 
 ul li#inGameCoucherButton,
-ul li#inGameTapisButton {
+ul li#inGameTapisButton,
+ul li#inGameFinishButton {
     background: linear-gradient(to right, rgb(0, 82, 7), rgb(0, 175, 15));
     text-align: right;
     padding-right: 7%;
@@ -470,6 +471,12 @@ ul li#inGameTapisButton {
     position: absolute;
     top: -9vh;
     left: 28vw;
+}
+
+ul li#inGameFinishButton {
+    position: absolute;
+    top: -18vh;
+    left: 29vw;
 }
 
 ul li#inGameSuivreButton {
@@ -486,6 +493,11 @@ ul li#inGameSuivreButton:hover {
 
 ul li#inGameCoucherButton:hover,
 ul li#inGameTapisButton:hover {
+    transform: perspective(133px) rotateY(-20deg);
+    padding-right: 4%;
+}
+
+ul li#inGameFinishButton:hover {
     transform: perspective(133px) rotateY(-20deg);
     padding-right: 4%;
 }

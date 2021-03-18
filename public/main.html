@@ -152,11 +152,12 @@
                 <li id="inGameSuivreButton">Suivre</li>
                 <li id="inGameCoucherButton" onclick="handleCoucher()">Se coucher</li>
                 <li id="inGameTapisButton" onclick="doTapis()">TAPIS</li>
+                <li id="inGameFinishButton" onclick="handleFinishTurn()">Fini</li>
             </ul>
             <div id="inGameMainIU">
                 <h4 class="inGameMenuUI" id="inGameMenuUIName"></h4>
                 <h4 class="inGameMenuUI" id="inGameMenuUIBets"></h4>
-                <h4 class="inGameMenuUI" id="inGameMenuUITime">Timer : 0m0s - Tour </h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUITime">Timer : 0m0s - Tour 0</h4>
                 <h4 class="inGameMenuUI" id="inGameMenuUIStatus">Statut du joueur : Grosse Blind</h4>
             </div>
             <div class="testTokenPileBlack">
@@ -238,8 +239,6 @@
         generateTokens(me.entryBet)
         $("#inGameMenu").show("fast")
         $("#preGameLobby").hide("fast")
-        showCard(760, 450, 17, 0.48, "playerCard1")
-        showCard(635, 450, -17, 0.48, "playerCard2")
         showCard(375, 135, 0, 0.35, "publicCard1")
         showCard(545, 135, 0, 0.35, "publicCard2")
         showCard(715, 135, 0, 0.35, "publicCard3")
@@ -333,9 +332,13 @@
             var timeInSeconds = Math.floor(millis / 1000)
             var minutes = Math.floor(timeInSeconds / 60)
             timeInSeconds -= (Math.floor(Math.floor(millis / 1000) / 60)) * 60
-            document.getElementById("inGameMenuUITime").innerText = `Timer : ${minutes}m${timeInSeconds}s - Tour 15`
+            document.getElementById("inGameMenuUITime").innerText = `Timer : ${minutes}m${timeInSeconds}s - ` + document.getElementById("inGameMenuUITime").innerText.split(" - ")[1]
             launchTimeClock()
         }, 1000);
+    }
+
+    function updateTurns(turn) {
+        document.getElementById("inGameMenuUITime").innerText = document.getElementById("inGameMenuUITime").innerText.split(" - ")[0] + " - Tour " + turn
     }
 
     var serverWaiting = false
@@ -406,6 +409,31 @@
         }
     }
 
+    function showCards() {
+        send(`f__console.log("${myID} showed his cards")__${myID}`)
+        showCard(760, 450, 17, 0.48, "playerCard1")
+        showCard(635, 450, -17, 0.48, "playerCard2")
+    }
+
+    function waitForPlay(previousBet, state) {
+        if (previousBet == "grosseBlind") {
+            showGrosseBlindMenu()
+        } else {
+            if (state == "petiteBlind") {
+                showPetiteBlindMenu()
+            }
+        }
+    }
+
+    function showPetiteBlindMenu() {
+
+    }
+
+    function handleFinishTurn() {
+        document.getElementById("inGameMenuUIBets").innerText = document.getElementById("inGameMenuUIBets").innerText.split(" - ")[0] + " - Mise 0 $"
+        send(`f__finishedMyTurn(${myID})__${myID}`)
+    }
+
     function showCard(posX, posY, rotation, scale, Id) {
         var card = document.createElement("div")
         card.style.background = "url('resources/img/deck.png')"
@@ -427,6 +455,9 @@
     function betHandler(color) {
         if (!serverWaiting) {
             return false
+        }
+        if (color != null) {
+            document.getElementById("inGameCheckButton").innerHTML = "OK"
         }
         var values = {
             "Black": 500,

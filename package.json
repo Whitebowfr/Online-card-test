@@ -21,6 +21,7 @@
     "express": "^4.17.1",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
+    "pokersolver": "^2.1.4",
     "ws": "^7.4.4"
   }
 }
