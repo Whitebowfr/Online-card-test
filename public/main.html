@@ -415,7 +415,10 @@
         showCard(635, 450, -17, 0.48, "playerCard2")
     }
 
+    var previousBet = 0
+
     function waitForPlay(previousBet, state) {
+        var previousBet = previousBet
         if (previousBet == "grosseBlind") {
             showGrosseBlindMenu()
         } else {
@@ -430,6 +433,9 @@
     }
 
     function handleFinishTurn() {
+        if (parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" - ")[1].replace("Mise ", "").replace(" $", "")) < previousBet) {
+            return false
+        }
         document.getElementById("inGameMenuUIBets").innerText = document.getElementById("inGameMenuUIBets").innerText.split(" - ")[0] + " - Mise 0 $"
         send(`f__finishedMyTurn(${myID})__${myID}`)
     }

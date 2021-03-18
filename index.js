@@ -464,7 +464,6 @@ function finishedMyTurn(ID) {
     }
     var updatedPlayingPlayers = []
     currentlyPlayingPlayer++
-    console.log("nowPlaying:", currentlyPlayingPlayer, "bet to set:", previousBet)
     if (playingPlayers.length == 1) {
         checkVictory(playingPlayers[0])
     }
@@ -475,9 +474,6 @@ function finishedMyTurn(ID) {
                 break
             }
         }
-    }
-    if (currentlyPlayingPlayer >= updatedPlayingPlayers.length--) {
-        currentlyPlayingPlayer = -1
     }
     if ((currentlyPlayingPlayer == 3 && turn == 0) || (updatedPlayingPlayers.length == 2 && currentlyPlayingPlayer == 1 && turn == 0)) {
         for (var i = 0; i < playingPlayers.length; i++) {
@@ -499,6 +495,7 @@ function finishedMyTurn(ID) {
         sendGlobal(`cmd__updateTurns(${turn})`)
         toggleNextStep(turn)
     }
+    console.log("nowPlaying:", currentlyPlayingPlayer, "bet to set:", previousBet)
     sendToSpecificUser("info__yourTurn::" + previousBet, playingPlayers[currentlyPlayingPlayer].id)
 }
 
