@@ -474,7 +474,7 @@ function finishedMyTurn(ID) {
     if ((currentlyPlayingPlayer == 3 && turn == 0) || (updatedPlayingPlayers.length == 2 && currentlyPlayingPlayer == 1 && turn == 0)) {
         for (var i = 0; i < playingPlayers.length; i++) {
             for (var j = 0; j < data.usr.length; j++) {
-                if (data.usr[j].id == playingPlayers[i].id) {
+                if (data.usr[j].id == playingPlayers[i].id && data.usr[j].hand == []) {
                     data.usr[j].hand.push(drawCard())
                     data.usr[j].hand.push(drawCard())
                     console.log("player:", data.usr[j].id)
@@ -502,17 +502,6 @@ function finishedMyTurn(ID) {
 function toggleNextStep(turn) {
     var data = readDatabase()
     switch (turn) {
-        case 0:
-            for (var i = 0; i < data.usr.length; i++) {
-                if (data.usr[i].bet != 0) {
-                    data.currentGame.totalBetAmount += parseInt(data.usr[i].bet)
-                    data.usr[i].bet = 0
-                }
-            }
-            for (var i = 0; i <= 3; i++) data.currentGame.publicCards.push(drawCard())
-            updateDatabase(data)
-            sendGlobal(`info__publicCards::${JSON.stringify(data.currentGame.publicCards)}::${turn}`)
-            break
         case 1:
             for (var i = 0; i < data.usr.length; i++) {
                 if (data.usr[i].bet != 0) {
@@ -520,9 +509,9 @@ function toggleNextStep(turn) {
                     data.usr[i].bet = 0
                 }
             }
-            data.currentGame.publicCards.push(drawCard())
+            for (var i = 0; i < 3; i++) data.currentGame.publicCards.push(drawCard())
             updateDatabase(data)
-            sendGlobal(`info__publicCards::${JSON.stringify(data.currentGame.publicCards[3])}::${turn}`)
+            sendGlobal(`info__publicCards::${JSON.stringify(data.currentGame.publicCards)}::${turn}`)
             break
         case 2:
             for (var i = 0; i < data.usr.length; i++) {
@@ -533,9 +522,20 @@ function toggleNextStep(turn) {
             }
             data.currentGame.publicCards.push(drawCard())
             updateDatabase(data)
-            sendGlobal(`info__publicCards::${JSON.stringify(data.currentGame.publicCards[4])}::${turn}`)
+            sendGlobal(`info__publicCards::${JSON.stringify(data.currentGame.publicCards[3])}::${turn}`)
             break
         case 3:
+            for (var i = 0; i < data.usr.length; i++) {
+                if (data.usr[i].bet != 0) {
+                    data.currentGame.totalBetAmount += parseInt(data.usr[i].bet)
+                    data.usr[i].bet = 0
+                }
+            }
+            data.currentGame.publicCards.push(drawCard())
+            updateDatabase(data)
+            sendGlobal(`info__publicCards::${JSON.stringify(data.currentGame.publicCards[4])}::${turn}`)
+            break
+        case 4:
             for (var i = 0; i < data.usr.length; i++) {
                 if (data.usr[i].bet != 0) {
                     data.currentGame.totalBetAmount += parseInt(data.usr[i].bet)
