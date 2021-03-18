@@ -472,12 +472,13 @@ function finishedMyTurn(ID) {
         }
     }
     if ((currentlyPlayingPlayer > 1 && turn == 0) || (updatedPlayingPlayers.length == 2 && currentlyPlayingPlayer == 1 && turn == 0)) {
-        for (var i = 0; i < playingPlayers.length; i++) {
+        for (var i = 0; i < updatedPlayingPlayers.length; i++) {
             for (var j = 0; j < data.usr.length; j++) {
-                if (data.usr[j].id == playingPlayers[i].id && data.usr[j].hand == []) {
+                console.log("is ", data.usr[j].id, " is equal to ", playingPlayers[i].id)
+                if (data.usr[j].id == updatedPlayingPlayers[i].id && (data.usr[j].hand == [] || data.usr[j].hand == undefined)) {
                     data.usr[j].hand.push(drawCard())
                     data.usr[j].hand.push(drawCard())
-                    console.log("player:", data.usr[j].id)
+                    console.log("player:", data.usr[j].id, "his cards:", data.usr[j].hand)
                     sendToSpecificUser(`info__yourCards::${JSON.stringify(data.usr[j].hand)}`, data.usr[j].id)
                     break
                 }
