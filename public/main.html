@@ -437,6 +437,7 @@
     function handleFinishTurn() {
         console.log(parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" - ")[1].replace("Mise ", "").replace(" $", "")), previousBet)
         if (parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" - ")[1].replace("Mise ", "").replace(" $", "")) < previousBet) {
+            alert("Parie plus grosse merde")
             return false
         } else {
             send(`f__finishedMyTurn(${myID})__${myID}`)

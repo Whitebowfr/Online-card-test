@@ -41,7 +41,7 @@ function messageHandler(mes) {
                 break
             case infoValues[0] == "yourTurn" && status == "waiting for server":
                 serverWaiting = true
-                previousBet = infoValues[1]
+                previousBet = parseInt(infoValues[1])
                 waitForPlay(infoValues[1])
                 break
             case infoValues[0] == "yourCards" && status == "waiting for server":
