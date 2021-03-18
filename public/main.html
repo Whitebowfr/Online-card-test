@@ -433,6 +433,7 @@
     }
 
     function handleFinishTurn() {
+        console.log(parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" - ")[1].replace("Mise ", "").replace(" $", "")))
         if (parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" - ")[1].replace("Mise ", "").replace(" $", "")) < previousBet) {
             return false
         }

@@ -485,11 +485,15 @@ function finishedMyTurn(ID) {
         }
     }
     updateDatabase(data)
-    if (currentlyPlayingPlayer > updatedPlayingPlayers.length && updatedPlayingPlayers.every((val, i, arr) => val.bet === arr[0].bet)) {
+    if (currentlyPlayingPlayer > updatedPlayingPlayers.length - 1 && updatedPlayingPlayers.every((val, i, arr) => val.bet === arr[0].bet)) {
+        previousBet = 0
         currentlyPlayingPlayer = 0
         turn++
         sendGlobal(`cmd__updateTurns(${turn})`)
         toggleNextStep(turn)
+    }
+    if (currentlyPlayingPlayer > updatedPlayingPlayers.length - 1) {
+        currentlyPlayingPlayer = 0
     }
     console.log("nowPlaying:", currentlyPlayingPlayer, "bet to set:", previousBet)
     sendToSpecificUser("info__yourTurn::" + previousBet, playingPlayers[currentlyPlayingPlayer].id)
