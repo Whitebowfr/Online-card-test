@@ -464,6 +464,7 @@ function finishedMyTurn(ID) {
     }
     var updatedPlayingPlayers = []
     currentlyPlayingPlayer++
+    console.log("nowPlaying:", currentlyPlayingPlayer, "bet to set:", previousBet)
     if (playingPlayers.length == 1) {
         checkVictory(playingPlayers[0])
     }
