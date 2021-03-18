@@ -46,26 +46,30 @@ function messageHandler(mes) {
                 break
             case infoValues[0] == "yourCards" && status == "waiting for server":
                 console.log(infoValues[1])
+                showCards()
                 displayYourCards(infoValues[1])
                 break
             case infoValues[0] == "yourData":
                 me = JSON.parse(infoValues[1])
                 break
+            case infoValues[0] == "publicCards":
+                for (var i = 0; i < infoValues[1].length; i++) displayPublicCards(infoValues[1][i], i)
+                break
         }
     }
     if (mes.includes("cmd__")) {
-        console.log(mes.split("__")[1])
         eval(mes.split("__")[1])
     }
 }
 
 function displayYourCards(cards) {
     cards = JSON.parse(cards)
-    console.log(cards[0])
-    console.log(getCard("position", cards[0]))
-    console.log(cards[1], getCard("position", cards[1]))
     document.getElementById("playerCard1").style.backgroundPosition = -446 * getCard("position", cards[0]) + "px"
     document.getElementById("playerCard2").style.backgroundPosition = -446 * getCard("position", cards[1]) + "px"
+}
+
+function displayPublicCards(card, number) {
+    document.getElementById(`publicCard${number}`).style.backgroundPosition = -446 * getCard("position", card) + "px"
 }
 
 function replaceAt(string, index, replace) {
