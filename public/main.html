@@ -194,6 +194,13 @@
     }
     const inputs = document.querySelectorAll('.form-control input');
     const labels = document.querySelectorAll('.form-control label');
+    const decks = [{
+        "name": "deck_basic",
+        "cardWidth": 150,
+        "randomBack": false,
+        "cardStart": 150,
+        "cardBorder": "2px solid black"
+    }]
     var status = "none"
 
     labels.forEach(label => {
@@ -231,11 +238,11 @@
         createTokenPile(generateTokens(me.entryBet), myID)
         $("#inGameMenu").show("fast")
         $("#preGameLobby").hide("fast")
-        showCard(375, 135, 0, 0.35, "publicCard1")
-        showCard(545, 135, 0, 0.35, "publicCard2")
-        showCard(715, 135, 0, 0.35, "publicCard3")
-        showCard(885, 135, 0, 0.35, "publicCard4")
-        showCard(1055, 135, 0, 0.35, "publicCard5")
+        showCard(375, 135, 0, 0.35, "publicCard1", "deck_basic")
+        showCard(545, 135, 0, 0.35, "publicCard2", "deck_basic")
+        showCard(715, 135, 0, 0.35, "publicCard3", "deck_basic")
+        showCard(885, 135, 0, 0.35, "publicCard4", "deck_basic")
+        showCard(1055, 135, 0, 0.35, "publicCard5", "deck_basic")
         startDate = Date.now()
         launchTimeClock()
         document.getElementsByClassName("inGameOptionMenuList")[3].innerText = "💲"
@@ -437,8 +444,8 @@
 
     function showCards() {
         send(`f__console.log("${myID} showed his cards")__${myID}`)
-        showCard(760, 450, 17, 0.48, "playerCard1")
-        showCard(635, 450, -17, 0.48, "playerCard2")
+        showCard(760, 450, 17, 0.48, "playerCard1", "deck_basic")
+        showCard(635, 450, -17, 0.48, "playerCard2", "deck_basic")
     }
 
     var previousBet = 0
@@ -464,21 +471,33 @@
         }
     }
 
-    function showCard(posX, posY, rotation, scale, Id) {
+    function showCard(posX, posY, rotation, scale, Id, deckName) {
         var card = document.createElement("div")
-        card.style.background = "url('resources/img/deck.png')"
+        for (var i = 0; i < decks.length; i++) {
+            if (decks[i].name == deckName) {
+                var currentDeck = decks[i]
+                break
+            }
+        }
+        card.style.background = `url('resources/img/${deckName}.png')`
         card.style.backgroundRepeat = "no-repeat"
         card.style.backgroundSize = "cover"
         card.style.height = "624px"
         card.style.width = "440px"
         card.id = Id
         card.style.borderRadius = "15px 15px 15px 15px"
-        card.style.backgroundPosition = "0px"
+        if (currentDeck.randomBack) {
+            var numberOfBacks = Math.floor(currentDeck.cardStart / currentDeck.cardWidth)
+            var chosenBack = Math.floor(Math.random() * numberOfBacks)
+            card.style.backgroundPosition = chosenBack * currentDeck.cardWidth + "px"
+        } else {
+            card.style.backgroundPosition = "0px"
+        }
         card.style.marginLeft = posX + "px"
         card.style.marginTop = posY + "px"
         card.style.position = "absolute"
         card.style.transform = `rotate(${rotation}deg) scale(${scale})`
-        card.style.border = "2px solid black"
+        card.style.border = currentDeck.cardBorder
         document.getElementById("inGameWrapper").insertBefore(card, document.querySelector(".testTokenPileBlack"))
     }
 
