@@ -55,9 +55,6 @@ wss.on('connection', (ws, req) => {
         for (var i = 0; i < data.usr.length; i++) {
 
             if (data.waitingForGame.includes(Number(data.usr[i].id))) {
-                if (data.usr[i].name != name) {
-                    data.usr[i].name = name
-                }
                 waitingNames.push(data.usr[i].name)
             }
 
