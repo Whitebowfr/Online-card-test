@@ -148,17 +148,17 @@
         <div id="inGameWrapper">
             <div id="inGamePokerTable"></div>
             <ul id="inGameInteractionButtons">
-                <li id="inGameCheckButton">Check</li>
-                <li id="inGameSuivreButton">Suivre</li>
+                <li id="inGameCheckButton" onclick="check()">Check</li>
+                <li id="inGameSuivreButton" onclick="follow()">Suivre</li>
                 <li id="inGameCoucherButton" onclick="handleCoucher()">Se coucher</li>
                 <li id="inGameTapisButton" onclick="doTapis()">TAPIS</li>
-                <li id="inGameFinishButton" onclick="handleFinishTurn()">Fini</li>
+                <li id="inGameFinishButton" style="display: none;" onclick="handleFinishTurn()">Fini</li>
             </ul>
             <div id="inGameMainIU">
                 <h4 class="inGameMenuUI" id="inGameMenuUIName"></h4>
                 <h4 class="inGameMenuUI" id="inGameMenuUIBets"></h4>
                 <h4 class="inGameMenuUI" id="inGameMenuUITime">Timer : 0m0s - Tour 0</h4>
-                <h4 class="inGameMenuUI" id="inGameMenuUIStatus">Statut du joueur : Grosse Blind</h4>
+                <h4 class="inGameMenuUI" id="inGameMenuUIStatus"></h4>
             </div>
             <div class="testTokenPileBlack">
                 <h3 id="testTokenCounterBlack" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
@@ -174,21 +174,6 @@
             </div>
             <div class="testTokenPileYellow">
                 <h3 id="testTokenCounterYellow" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
-            </div>
-            <div id="temporaryButtons" style="margin-left: 40vw">
-                <input type="button" value="add 10" onclick="createTokenPile([0,0,0,0,1], myID)">
-                <input type="button" value="add 50" onclick="createTokenPile([0,0,0,1,0]), myID">
-                <input type="button" value="add 100" onclick="createTokenPile([0,0,1,0,0]), myID">
-                <input type="button" value="add 200" onclick="createTokenPile([0,1,0,0,0]), myID">
-                <input type="button" value="add 500" onclick="createTokenPile([1,0,0,0,0]), myID">
-                <input type="button" value="add 5 of each" onclick="createTokenPile([5,5,5,5,5]), myID">
-                <br>
-                <input type="button" value="remove 10" onclick="createTokenPile([0,0,0,0,-1]), myID">
-                <input type="button" value="remove 50" onclick="createTokenPile([0,0,0, -1,0]), myID">
-                <input type="button" value="remove 100" onclick="createTokenPile([0,0,-1,0,0]), myID">
-                <input type="button" value="remove 200" onclick="createTokenPile([0,-1,0,0,0]), myID">
-                <input type="button" value="remove 500" onclick="createTokenPile([-1,0,0,0,0]), myID">
-                <input type="button" value="remove 5 of each" onclick="createTokenPile([-5,-5,-5,-5,-5]), myID">
             </div>
         </div>
     </div>
@@ -227,7 +212,8 @@
     function loadGame(players) {
         document.getElementsByClassName("area")[0].style.display = "none"
         players = JSON.parse(players)
-        document.getElementById("inGameMenuUIName").innerText = document.getElementById("customName").value
+        console.log("name:", myName)
+        document.getElementById("inGameMenuUIName").innerText = document.getElementById("customName").value || myName
         for (var i = 0; i < players.length; i++) {
             console.log(players[i].id)
             if (players[i].id == myID) {
@@ -343,15 +329,15 @@
         document.getElementById("inGameMenuUITime").innerText = document.getElementById("inGameMenuUITime").innerText.split(" - ")[0] + " - Tour " + turn
     }
 
-    var serverWaiting = false
-
-
-    function ready() {
-        if (serverWaiting) {
-            send("f__nextStep()__" + myID)
+    function check() {
+        if (!document.getElementById("inGameMenuUIStatus").innerText.includes("Grosse Blind") && parseInt(document.getElementById("inGameMenuUITime").innerText.split(" - ")[1].replace("Tour ", "")) != 0) {
+            handleFinishTurn()
+        } else {
+            alert("T'es aveugle ou quoi")
         }
-        serverWaiting = false
     }
+
+    var serverWaiting = false
 
     function handleInGameOptions() {
         if (document.getElementById("inGameOptionsDiv").style.display != "none") {
@@ -381,8 +367,6 @@
     function handleCoucher() {
         document.getElementById("playerCard1").style.backgroundPosition = "0px"
         document.getElementById("playerCard2").style.backgroundPosition = "0px"
-        send(`f__couche(${myID})__${myID}`)
-        ready()
     }
 
     function doTapis() {
@@ -398,8 +382,8 @@
             document.getElementsByClassName("testTokenPile" + colors[color])[0].innerHTML = `<h3 id="testTokenCounter${colors[color]}" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>`
             totalTokens += temp * values[color]
         }
-        ready()
         send(`f__bet(${myID}, ${totalTokens})__${myID}`)
+        handleFinishTurn()
     }
 
     function handleConversion() {
@@ -421,18 +405,13 @@
 
     function waitForPlay(previousBet, state) {
         var previousBet = previousBet
-        if (previousBet == "grosseBlind") {
-            showGrosseBlindMenu()
+        if (state != undefined) {
+            document.getElementById("inGameMenuUIStatus").innerText = `Min : ${previousBet}$ (${state == 0 ? "Grosse": "Petite"} Blind)`
         } else {
-            if (state == "petiteBlind") {
-                showPetiteBlindMenu()
-            }
+            document.getElementById("inGameMenuUIStatus").innerText = "Min" + previousBet + "$"
         }
     }
 
-    function showPetiteBlindMenu() {
-
-    }
 
     function handleFinishTurn() {
         console.log(parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" - ")[1].replace("Mise ", "").replace(" $", "")), previousBet)
@@ -469,6 +448,7 @@
         }
         if (color != null) {
             document.getElementById("inGameCheckButton").innerText = "OK"
+            $("#inGameFinishButton").show("fast")
         }
         var values = {
             "Black": 500,

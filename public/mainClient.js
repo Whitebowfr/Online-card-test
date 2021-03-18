@@ -1,7 +1,8 @@
 var HOST = location.origin.replace(/^http/, 'ws')
 var ws = new WebSocket(HOST);
 var el;
-var myID
+var myID;
+var myName = ""
 
 ws.onmessage = function(event) {
     messageHandler(event.data)
@@ -24,6 +25,7 @@ function messageHandler(mes) {
         switch (true) {
             case infoValues[0] == "yourName":
                 document.getElementById("customName").value = infoValues[1]
+                myName = infoValues[1]
                 break;
             case infoValues[0] == "playersInQueue" && (status == "connecting" || status == "pre-game lobby basic"):
                 if (status != "pre-game lobby basic") {
@@ -42,7 +44,11 @@ function messageHandler(mes) {
             case infoValues[0] == "yourTurn" && status == "waiting for server":
                 serverWaiting = true
                 previousBet = parseInt(infoValues[1])
-                waitForPlay(infoValues[1])
+                if (infoValues[2] != undefined) {
+                    waitForPlay(infoValues[1], infoValues[2])
+                } else {
+                    waitForPlay(infoValues[1])
+                }
                 break
             case infoValues[0] == "yourCards" && status == "waiting for server":
                 console.log(infoValues[1])

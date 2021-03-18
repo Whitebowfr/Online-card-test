@@ -19,7 +19,7 @@ var clientsReady = 0
 const currentServerID = Math.round(Math.random() * 10000000)
 data.waitingForGame = []
 updateDatabase(data)
-const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady", "sendToSpecificUser", "nextStep", "console.log", "finishedMyTurn"]
+const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady", "sendToSpecificUser", "console.log", "finishedMyTurn"]
 
 resetDatabase()
 
@@ -498,7 +498,12 @@ function finishedMyTurn(ID) {
     }
     console.log("nowPlaying:", currentlyPlayingPlayer, "bet to set:", previousBet)
     console.log("ID of player", updatedPlayingPlayers[currentlyPlayingPlayer].id)
-    sendToSpecificUser("info__yourTurn::" + previousBet, updatedPlayingPlayers[currentlyPlayingPlayer].id)
+    if ((currentlyPlayingPlayer == 0 || currentlyPlayingPlayer == 1) && turn == 0) {
+        sendToSpecificUser("info__yourTurn::" + previousBet + "::" + currentlyPlayingPlayer, updatedPlayingPlayers[currentlyPlayingPlayer].id)
+    } else {
+        console.log(updatedPlayingPlayers, currentlyPlayingPlayer)
+        sendToSpecificUser("info__yourTurn::" + previousBet, updatedPlayingPlayers[currentlyPlayingPlayer].id)
+    }
 }
 
 function toggleNextStep(turn) {
@@ -524,7 +529,7 @@ function toggleNextStep(turn) {
             }
             data.currentGame.publicCards.push(drawCard())
             updateDatabase(data)
-            sendGlobal(`info__publicCards::${JSON.stringify(data.currentGame.publicCards[3])}::${turn}`)
+            sendGlobal(`info__publicCards::[${JSON.stringify(data.currentGame.publicCards[3])}]::${turn}`)
             break
         case 3:
             for (var i = 0; i < data.usr.length; i++) {
@@ -535,7 +540,7 @@ function toggleNextStep(turn) {
             }
             data.currentGame.publicCards.push(drawCard())
             updateDatabase(data)
-            sendGlobal(`info__publicCards::${JSON.stringify(data.currentGame.publicCards[4])}::${turn}`)
+            sendGlobal(`info__publicCards::[${JSON.stringify(data.currentGame.publicCards[4])}]::${turn}`)
             break
         case 4:
             for (var i = 0; i < data.usr.length; i++) {
