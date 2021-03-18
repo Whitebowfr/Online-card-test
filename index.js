@@ -471,7 +471,7 @@ function finishedMyTurn(ID) {
             }
         }
     }
-    if ((currentlyPlayingPlayer == 3 && turn == 0) || (updatedPlayingPlayers.length == 2 && currentlyPlayingPlayer == 1 && turn == 0)) {
+    if ((currentlyPlayingPlayer > 1 && turn == 0) || (updatedPlayingPlayers.length == 2 && currentlyPlayingPlayer == 1 && turn == 0)) {
         for (var i = 0; i < playingPlayers.length; i++) {
             for (var j = 0; j < data.usr.length; j++) {
                 if (data.usr[j].id == playingPlayers[i].id && data.usr[j].hand == []) {
@@ -496,7 +496,8 @@ function finishedMyTurn(ID) {
         currentlyPlayingPlayer = 0
     }
     console.log("nowPlaying:", currentlyPlayingPlayer, "bet to set:", previousBet)
-    sendToSpecificUser("info__yourTurn::" + previousBet, playingPlayers[currentlyPlayingPlayer].id)
+    console.log("ID of player", updatedPlayingPlayers[currentlyPlayingPlayer].id)
+    sendToSpecificUser("info__yourTurn::" + previousBet, updatedPlayingPlayers[currentlyPlayingPlayer].id)
 }
 
 function toggleNextStep(turn) {
