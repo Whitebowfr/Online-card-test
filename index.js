@@ -85,6 +85,7 @@ wss.on('connection', (ws, req) => {
                 } else {
                     data.usr[i].entryBet = entryBet
                 }
+                data.usr[i].bank -= entryBet
             }
         }
         var clientsReady = data.isReady.length
@@ -142,6 +143,19 @@ wss.on('connection', (ws, req) => {
                 if (data.usr[i].id == data.waitingForGame[id]) {
                     waitingNames.push(data.usr[i].name)
                 }
+            }
+        }
+
+        for (var i = 0; i < data.usr.length; i++) {
+            if (data.usr[i].id == disconnectedID) {
+                if (data.usr[i].entryBet != 0) {
+                    data.usr[i].bank += data.usr[i].entryBet
+                }
+                data.usr[i].entryBet = 0
+                data.usr[i].bet = 0
+                data.usr[i].hand = []
+                data.usr[i].ws = ""
+                break
             }
         }
 
@@ -558,6 +572,7 @@ function checkVictory(players) {
     if (players.length == 1) {
         sendGlobal(`info__playerHandValue::${players[0].id}::last`)
         handleVictory(players[0])
+        return
     }
     var data = readDatabase()
     var playersToCheck = []
