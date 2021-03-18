@@ -441,6 +441,7 @@
             return false
         } else {
             send(`f__finishedMyTurn(${myID})__${myID}`)
+            serverWaiting = false
         }
     }
 
