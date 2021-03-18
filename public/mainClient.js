@@ -53,7 +53,12 @@ function messageHandler(mes) {
                 me = JSON.parse(infoValues[1])
                 break
             case infoValues[0] == "publicCards":
-                for (var i = 0; i < infoValues[1].length; i++) displayPublicCards(infoValues[1][i], i)
+                console.log(infoValues[1])
+                for (var i = 0; i < infoValues[1].length - 1; i++) {
+                    if (JSON.parse(infoValues[1])[i] != undefined) {
+                        displayPublicCards(JSON.parse(infoValues[1])[i], i + 1)
+                    }
+                }
                 break
         }
     }
@@ -69,6 +74,7 @@ function displayYourCards(cards) {
 }
 
 function displayPublicCards(card, number) {
+    console.log(card, number)
     document.getElementById(`publicCard${number}`).style.backgroundPosition = -446 * getCard("position", card) + "px"
 }
 
