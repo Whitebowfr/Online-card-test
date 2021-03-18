@@ -222,7 +222,7 @@
             }
         }
         document.getElementById("inGameMenuUIBets").innerText = "En jeu : " + me.entryBet + " $ - Mise 0 $"
-        generateTokens(me.entryBet)
+        createTokenPile(generateTokens(me.entryBet), myID)
         $("#inGameMenu").show("fast")
         $("#preGameLobby").hide("fast")
         showCard(375, 135, 0, 0.35, "publicCard1")
@@ -241,30 +241,42 @@
     function generateTokens(quantity) {
         var tokens = [0, 0, 0, 0, 0]
         var rest = quantity
-        var add500 = true
-        var add200 = true
-        switch (true) {
-            case quantity / 500 <= 3:
-                var add500 = false
-            case quantity / 200 <= 5:
-                var add200 = false
+        var quantity500 = 0
+        var quantity200 = 0
+        var quantity100 = 0
+        var quantity50 = 0
+        var quantity10 = 0
+        while (rest != 0) {
+            var ran = Math.floor(Math.random() * 100)
+            switch (true) {
+                case ran < 25 && ran >= 0:
+                    if (rest - 500 >= 0) {
+                        rest -= 500
+                        quantity500++
+                    }
+                case ran < 55 && ran >= 25:
+                    if (rest - 200 >= 0) {
+                        rest -= 200
+                        quantity200++
+                    }
+                case ran < 85 && ran >= 55:
+                    if (rest - 100 >= 0) {
+                        rest -= 100
+                        quantity100++
+                    }
+                case ran < 95 && ran >= 85:
+                    if (rest - 50 >= 0) {
+                        rest -= 50
+                        quantity50++
+                    }
+                case ran <= 100 && ran >= 95:
+                    if (rest - 10 >= 0) {
+                        rest -= 10
+                        quantity10++
+                    }
+            }
         }
-        if (add500) {
-            var quantity500 = Math.floor(quantity / 500)
-            rest = quantity - quantity500 * 500
-        }
-        if (add200) {
-            var quantity200 = Math.floor(rest / 200)
-            rest = rest - quantity200 * 200
-        }
-        var quantity100 = Math.floor(rest / 100)
-        rest = rest - quantity100 * 100
-        var quantity50 = Math.floor(rest / 50)
-        rest = rest - quantity50 * 50
-        var quantity10 = Math.floor(rest / 10)
-        rest = rest - quantity10 * 10
-        console.log(quantity)
-        createTokenPile([quantity500 || 0, quantity200 || 0, quantity100 || 0, quantity50 || 0, quantity10 || 0], myID)
+        return [quantity500 || 0, quantity200 || 0, quantity100 || 0, quantity50 || 0, quantity10 || 0]
     }
 
     function convert(inputs) {
@@ -335,6 +347,28 @@
         } else {
             alert("T'es aveugle ou quoi")
         }
+    }
+
+    function follow() {
+        const colorsOfTokens = ["Black", "Blue", "Green", "Red", "Yellow"]
+        var bank = parseInt(document.getElementById("inGameMenuUIBets").split(" $ - ")[0].replace("En jeu : ", ""))
+        var mise = parseInt(document.getElementById("inGameMenuUIBets").split(" - Mise ")[1].replace(" $", ""))
+        var missing = previousBet - mise
+        if (missing <= 0) {
+            alert("T'es con ou tu le fais exprès")
+            return false
+        } else {
+            bank -= missing
+            mise = previousBet
+            for (var i = 0; i < colorsOfTokens.length; i++) {
+                document.getElementById("testTokenPile" + colorsOfTokens[i]).innerHTML = `<h3 id="testTokenCounterBlack" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;">0</h3>`
+                createTokenPile(generateTokens(bank))
+            }
+            document.getElementById("inGameMenuUIBets").innerText = `En jeu : ${bank} $ - Mise ${mise} $`
+            send(`f__bet(${myID}, ${missing})__${myID}`)
+            handleFinishTurn()
+        }
+
     }
 
     var serverWaiting = false
