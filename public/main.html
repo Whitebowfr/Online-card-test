@@ -235,6 +235,7 @@
             }
         }
         document.getElementById("inGameMenuUIBets").innerText = "En jeu : " + me.entryBet + " $ - Mise 0 $"
+        createPlayerCards(players)
         createTokenPile(generateTokens(me.entryBet), myID)
         $("#inGameMenu").show("fast")
         $("#preGameLobby").hide("fast")
@@ -247,6 +248,34 @@
         launchTimeClock()
         document.getElementsByClassName("inGameOptionMenuList")[3].innerText = "💲"
         status = "waiting for server"
+    }
+
+    function createPlayerCards(players) {
+        const positions = [
+            [30, 82],
+            [75, 10],
+            [10, 5],
+            [30, 0],
+            [50, 2]
+        ]
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].id == 0) {
+                var myPlace = i + 1
+                var playersBeforeMe = (i - 1)
+                var playersAfterMe = players.length - (i + 1)
+                break
+            }
+        }
+        console.log(myPlace, players)
+        for (var i = 1; i < players.length; i++) {
+            if (myPlace == i) {
+                continue
+            } else {
+                var currentPos = positions[i]
+                console.log(currentPos)
+            }
+        }
+
     }
 
     //Black, Blue, Green, Red, Yellow
