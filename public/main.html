@@ -260,19 +260,24 @@
         ]
         for (var i = 0; i < players.length; i++) {
             if (players[i].id == 0) {
-                var myPlace = i + 1
+                var myPlace = i
                 var playersBeforeMe = (i - 1)
                 var playersAfterMe = players.length - (i + 1)
                 break
             }
         }
         console.log(myPlace, players)
-        for (var i = 0; i < players.length; i++) {
+        for (var i = myPlace; i > 0; i--) {
             if (players[i].id == 0) {
                 continue
-            } else {
-                var currentPos = positions[i]
-                console.log(currentPos)
+            }
+            if (i >= players.length) {
+                i = 0
+            }
+            var currentPos = positions[i]
+            console.log(currentPos)
+            if (i == 1 && myPlace != (players.length - 1)) {
+                i = players.length - 1
             }
         }
 
