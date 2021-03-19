@@ -226,7 +226,11 @@
         document.getElementsByClassName("area")[0].style.display = "none"
         players = JSON.parse(players)
         console.log("name:", myName)
-        document.getElementById("inGameMenuUIName").innerText = document.getElementById("customName").value || myName
+        if (document.getElementById("customName").value == "") {
+            document.getElementById("inGameMenuUIName").innerText = myName
+        } else {
+            document.getElementById("inGameMenuUIName").innerText = document.getElementById("customName").value
+        }
         for (var i = 0; i < players.length; i++) {
             console.log(players[i].id)
             if (players[i].id == myID) {
@@ -260,7 +264,7 @@
         div.style.top = positionY + "vh"
         div.style.left = positionX + "vw"
         div.id = "inGamePlayerCard" + id
-        div.innerHTML = "<h3 style='color: white; margin-left: 10px'>" + name + "</h3>"
+        div.innerHTML = "<h3 style='color: white; margin-left: 10px'>" + name + "</h3><br><h3 class='bets' style='color: white; margin-left: 15px'>Mise : 0 $</h3>"
         document.getElementById("inGameWrapper").append(div)
     }
 
@@ -289,10 +293,10 @@
         }
         console.log(myPlace, players)
         for (var i = 0; i < playersBeforeMe; i++) {
-            createInGameDiv(inversedPositions[i][1], inversedPositions[i][0], players[i].name, i)
+            createInGameDiv(inversedPositions[i][1], inversedPositions[i][0], players[i].name, player[i].id)
         }
         for (var i = 0; i < playersAfterMe; i++) {
-            createInGameDiv(positions[i][1], positions[i][0], players[i + 1 + myPlace].name, (i + 1 + myPlace))
+            createInGameDiv(positions[i][1], positions[i][0], players[i + 1 + myPlace].name, players[i + 1 + myPlace].id)
         }
 
     }
@@ -580,6 +584,8 @@
     function updateBets(bet, entryBet, ID) {
         if (ID == myID) {
             document.getElementById("inGameMenuUIBets").innerText = `Total ${entryBet} $ - Mise ${bet} $`
+        } else {
+            $("#inGamePlayerCard" + ID).children('.bets').text("Mise : " + bet + " $")
         }
     }
 
