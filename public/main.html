@@ -401,6 +401,9 @@
     }
 
     function updateTurns(turn) {
+        $(".bets").each(function() {
+            $(this).text("Mise : 0 $")
+        })
         document.getElementById("inGameCheckButton").innerText = "Check"
         document.getElementById("inGameMenuUIBets").innerText = document.getElementById("inGameMenuUIBets").innerText.split(" - ")[0] + " - Mise 0 $"
         document.getElementById("inGameMenuUITime").innerText = document.getElementById("inGameMenuUITime").innerText.split(" - ")[0] + " - Tour " + turn
@@ -416,8 +419,8 @@
 
     function follow() {
         const colorsOfTokens = ["Black", "Blue", "Green", "Red", "Yellow"]
-        var bank = parseInt(document.getElementById("inGameMenuUIBets").split(" $ - ")[0].replace("En jeu : ", ""))
-        var mise = parseInt(document.getElementById("inGameMenuUIBets").split(" - Mise ")[1].replace(" $", ""))
+        var bank = parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" $ - ")[0].replace("En jeu : ", ""))
+        var mise = parseInt(document.getElementById("inGameMenuUIBets").innerText.split(" - Mise ")[1].replace(" $", ""))
         var missing = previousBet - mise
         if (missing <= 0) {
             alert("T'es con ou tu le fais exprès")
