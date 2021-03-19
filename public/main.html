@@ -250,35 +250,51 @@
         status = "waiting for server"
     }
 
+    function createInGameDiv(positionX, positionY) {
+        var div = document.createElement("div")
+        div.style.backgroundColor = "grey"
+        div.style.borderRadius = "10px 10px 10px 10px"
+        div.style.width = "15%"
+        div.style.height = "15%"
+        div.style.position = "absolute"
+        div.style.top = positionY + "vh"
+        div.style.left = positionX + "vw"
+        document.getElementById("inGameWrapper").append(div)
+    }
+
     function createPlayerCards(players) {
         const positions = [
             [30, 82],
-            [75, 10],
+            [10, 75],
             [10, 5],
             [30, 0],
             [50, 2]
         ]
+        const inversedPositions = [
+            [50, 2],
+            [30, 0],
+            [10, 5],
+            [10, 75],
+            [30, 82]
+        ]
         for (var i = 0; i < players.length; i++) {
             if (players[i].id == 0) {
                 var myPlace = i
-                var playersBeforeMe = (i - 1)
+                var playersBeforeMe = i
                 var playersAfterMe = players.length - (i + 1)
                 break
             }
         }
         console.log(myPlace, players)
-        for (var i = myPlace; i >= 0; i--) {
-            if (players[i].id == 0) {
-                continue
-            }
-            if (i >= players.length) {
-                i = 0
-            }
-            var currentPos = positions[i]
-            console.log(currentPos)
-            if (i == 1 && myPlace != (players.length - 1)) {
-                i = players.length - 1
-            }
+        for (var i = 0; i < playersBeforeMe; i++) {
+            console.log(i)
+            var currentPosition = inversedPositions[i]
+            console.log(currentPosition)
+        }
+        for (var i = 0; i < playersAfterMe; i++) {
+            console.log("after:", i)
+            var currentPosition = positions[i]
+            console.log(currentPosition)
         }
 
     }
