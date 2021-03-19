@@ -268,10 +268,10 @@
         }
         console.log(myPlace, players)
         for (var i = 1; i < players.length; i++) {
-            if (myPlace == i) {
+            if (players[i].id == 0) {
                 continue
             } else {
-                var currentPos = positions[i - 1]
+                var currentPos = positions[i]
                 console.log(currentPos)
             }
         }
