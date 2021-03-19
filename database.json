@@ -1,24 +1,36 @@
 {
     "connectedIP": [
-        "::ffff:127.0.0.1"
+        "::ffff:127.0.0.1",
+        "::1"
     ],
     "correspondingID": [
-        69420
+        69420,
+        74
     ],
     "isReady": [],
     "waitingForGame": [],
     "usr": [{
-        "id": 69420,
-        "name": "",
-        "bank": 1000000000,
-        "hand": [],
-        "bet": 0,
-        "entryBet": 0,
-        "ws": ""
-    }],
+            "id": 69420,
+            "name": "",
+            "bank": 1000000000,
+            "hand": [],
+            "bet": 0,
+            "entryBet": 0,
+            "ws": ""
+        },
+        {
+            "id": 74,
+            "name": "Efficacité Délabré",
+            "bank": 474600,
+            "hand": [],
+            "bet": 0,
+            "entryBet": 0,
+            "ws": ""
+        }
+    ],
     "currentGame": {
         "publicCards": [],
-        "totalBetAmount": [],
+        "totalBetAmount": 0,
         "spectatorsID": [],
         "turn": 0,
         "isInGame": []
