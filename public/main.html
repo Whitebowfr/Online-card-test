@@ -293,7 +293,7 @@
         }
         console.log(myPlace, players)
         for (var i = 0; i < playersBeforeMe; i++) {
-            createInGameDiv(inversedPositions[i][1], inversedPositions[i][0], players[i].name, player[i].id)
+            createInGameDiv(inversedPositions[i][1], inversedPositions[i][0], players[i].name, players[i].id)
         }
         for (var i = 0; i < playersAfterMe; i++) {
             createInGameDiv(positions[i][1], positions[i][0], players[i + 1 + myPlace].name, players[i + 1 + myPlace].id)
