@@ -250,7 +250,7 @@
         status = "waiting for server"
     }
 
-    function createInGameDiv(positionX, positionY) {
+    function createInGameDiv(positionX, positionY, name, id) {
         var div = document.createElement("div")
         div.style.backgroundColor = "grey"
         div.style.borderRadius = "10px 10px 10px 10px"
@@ -259,6 +259,8 @@
         div.style.position = "absolute"
         div.style.top = positionY + "vh"
         div.style.left = positionX + "vw"
+        div.id = "inGamePlayerCard" + id
+        div.innerHTML = "<h3 style='color: white; margin-left: 10px'>" + name + "</h3>"
         document.getElementById("inGameWrapper").append(div)
     }
 
@@ -287,14 +289,10 @@
         }
         console.log(myPlace, players)
         for (var i = 0; i < playersBeforeMe; i++) {
-            console.log(i)
-            var currentPosition = inversedPositions[i]
-            console.log(currentPosition)
+            createInGameDiv(inversedPositions[i][1], inversedPositions[i][0], players[i], i)
         }
         for (var i = 0; i < playersAfterMe; i++) {
-            console.log("after:", i)
-            var currentPosition = positions[i]
-            console.log(currentPosition)
+            createInGameDiv(positions[i][1], positions[i][0], players[i + 1 + myPlace], (i + 1 + myPlace))
         }
 
     }
