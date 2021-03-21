@@ -415,7 +415,7 @@ svg {
     background-repeat: no-repeat;
     background-size: cover;
     left: 50%;
-    top: 50%;
+    top: 50vh;
     transform: translateY(-55%) scale(1.2) translateX(-42%);
 }
 
@@ -603,6 +603,7 @@ ul li#inGameFinishButton:hover {
     width: 40%;
     height: 50%;
     display: none;
+    border: 2px solid black;
 }
 
 #inGameConversionDiv {
@@ -616,6 +617,7 @@ ul li#inGameFinishButton:hover {
     width: 40%;
     height: 50%;
     display: none;
+    border: 2px solid black;
 }
 
 .switch {
@@ -726,6 +728,7 @@ input:checked+.slider:before {
     height: 8%;
     text-align: center;
     width: 35%;
+    border: 2px solid black;
 }
 
 details.custom-select {
@@ -842,4 +845,27 @@ ul.list>li>label {
     width: 100%;
     display: block;
     cursor: pointer;
+}
+
+#winningScreen {
+    position: absolute;
+    z-index: 99;
+    text-align: center;
+    background-color: whitesmoke;
+    border-radius: 20px 20px 20px 20px;
+    left: 50vw;
+    top: 20vh;
+    width: 30%;
+    height: 30%;
+    transform: translateX(-50%) translateY(-50%);
+    display: none;
+    border: 2px solid black;
+}
+
+#totalBetsOfGame {
+    color: darkred;
+    position: absolute;
+    left: 50vw;
+    transform: translateX(-50%);
+    top: 29vh
 }

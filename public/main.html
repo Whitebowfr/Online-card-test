@@ -83,6 +83,10 @@
             <div class="slider round"></div>
           </label>
         <h3 class="inGameOptionLabel">Limiter le nombre de jetons montrés à 30</h3>
+        <br>
+        <div class="wrapperButtonClassic">
+            <a href="#" class="aButtonClassic" style="width: 100%; margin-left: 50px;" onclick="if(confirm(`T'es sûr ? C'est pas sympa`)) {backToLobby(); connect()}"><span>Quitter la partie</span></a>
+        </div>
     </div>
     <div id="inGameConversionDiv" style="display: none;" class="inGameOptions">
         <details class="custom-select">
@@ -160,6 +164,7 @@
                 <h4 class="inGameMenuUI" id="inGameMenuUITime">Timer : 0m0s - Tour 0</h4>
                 <h4 class="inGameMenuUI" id="inGameMenuUIStatus"></h4>
             </div>
+            <h2 id="totalBetsOfGame">Mise totale : 0 $</h2>
             <div class="testTokenPileBlack">
                 <h3 id="testTokenCounterBlack" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
             </div>
@@ -174,6 +179,13 @@
             </div>
             <div class="testTokenPileYellow">
                 <h3 id="testTokenCounterYellow" style="top: 87vh; position: absolute; color: #a7a7a7; transform: translateX(300px); z-index: 99; font-size: 3rem; -webkit-text-stroke: 2px; -webkit-text-stroke-color: black;"></h3>
+            </div>
+        </div>
+        <div id="winningScreen">
+            <h2>Winning player : </h2>
+            <h2>Win amount : </h2>
+            <div class="wrapperButtonClassic">
+                <a href="#" class="aButtonClassic" onclick="backToLobby(); connect()"><span>Vers le lobby</span></a>
             </div>
         </div>
     </div>
@@ -223,6 +235,7 @@
     var startDate
 
     function loadGame(players) {
+        console.log(players)
         document.getElementsByClassName("area")[0].style.display = "none"
         players = JSON.parse(players)
         console.log("name:", myName)
@@ -437,7 +450,6 @@
             send(`f__bet(${myID}, ${missing})__${myID}`)
             handleFinishTurn()
         }
-
     }
 
     var serverWaiting = false
@@ -594,7 +606,18 @@
     }
 
     function backToLobby() {
-        location.reload()
+        send(`f__wentBackToLobby(${myID})__${myID}`)
+        document.getElementById('winningScreen').style.display = 'none'
+        status = "pre-game lobby classic"
+        document.getElementById("inGameWrapper").style.filter = "blur(0px)"
+        document.getElementById("readyCheckbox").checked = false
+    }
+
+    function showVictoryScreen(winID, amount) {
+        $("#winningScreen").show("fast")
+        document.getElementById("winningScreen").children[0].innerText = `Winning player : ${winID}`
+        document.getElementById("winningScreen").children[1].innerText = `Win amount : ${amount}`
+        document.getElementById("inGameWrapper").style.filter = "blur(10px)"
     }
 
     //The array should be in order, aka [black, blue, green, red, yellow]
@@ -678,6 +701,7 @@
     }
 
     function updatePreGameReady(connected, ready) {
+        console.log("called")
         if (connected != null) {
             if (document.getElementById("readyCheckbox").checked) {
                 document.getElementById("readyCheckbox").checked = false

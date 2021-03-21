@@ -3,6 +3,7 @@ var ws = new WebSocket(HOST);
 var el;
 var myID;
 var myName = ""
+var cardCounter = 0
 
 ws.onmessage = function(event) {
     messageHandler(event.data)
@@ -62,9 +63,14 @@ function messageHandler(mes) {
                 console.log(infoValues[1])
                 for (var i = 0; i < infoValues[1].length - 1; i++) {
                     if (JSON.parse(infoValues[1])[i] != undefined) {
-                        displayPublicCards(JSON.parse(infoValues[1])[i], i + 1)
+                        displayPublicCards(JSON.parse(infoValues[1])[i], cardCounter)
+                        cardCounter++
                     }
                 }
+                break
+            case infoValues[0] == "winningPlayer":
+                showVictoryScreen(infoValues[1], infoValues[2])
+                backToLobby()
                 break
         }
     }
