@@ -19,7 +19,7 @@ var clientsReady = 0
 const currentServerID = Math.round(Math.random() * 10000000)
 data.waitingForGame = []
 updateDatabase(data)
-const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady", "sendToSpecificUser", "console.log", "finishedMyTurn"]
+const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady", "sendToSpecificUser", "console.log", "finishedMyTurn", "wentBackToLobby"]
 
 resetDatabase()
 
@@ -78,14 +78,30 @@ wss.on('connection', (ws, req) => {
                 data.isReady.splice(indexBis, 1)
             }
         }
-        for (var i = 0; i < data.usr.length; i++) {
-            if (data.usr[i].id == ID) {
-                if (entryBet > data.usr[i].bank) {
-                    data.usr[i].entryBet = data.usr[i].bank
-                } else {
-                    data.usr[i].entryBet = entryBet
+        if (entryBet != undefined) {
+            console.log("entry bet :", entryBet)
+            for (var i = 0; i < data.usr.length; i++) {
+                if (data.usr[i].id == ID) {
+                    if (entryBet > data.usr[i].bank) {
+                        data.usr[i].entryBet = data.usr[i].bank
+                    } else {
+                        data.usr[i].entryBet = entryBet
+                    }
+                    data.usr[i].bank -= data.usr[i].entryBet
+                    console.log("on ready:", data.usr[i].bank)
+
                 }
-                data.usr[i].bank -= entryBet
+            }
+        }
+        if (entryBet == undefined) {
+            for (var i = 0; i < data.usr.length; i++) {
+                if (data.usr[i].id == ID) {
+                    if (data.usr[i].entryBet != 0) {
+                        data.usr[i].bank += data.usr[i].entryBet
+                        data.usr[i].entryBet = 0
+                    }
+                    break
+                }
             }
         }
         var clientsReady = data.isReady.length
@@ -151,11 +167,18 @@ wss.on('connection', (ws, req) => {
                 if (data.usr[i].entryBet != 0) {
                     data.usr[i].bank += data.usr[i].entryBet
                 }
+                console.log("bank after close:", data.usr[i].bank)
                 data.usr[i].entryBet = 0
                 data.usr[i].bet = 0
                 data.usr[i].hand = []
                 data.usr[i].ws = ""
                 break
+            }
+        }
+
+        for (var i = 0; i < data.currentGame.isInGame.length; i++) {
+            if (data.currentGame.isInGame[i].id == disconnectedID) {
+                data.currentGame.isInGame.splice(i, 1)
             }
         }
 
@@ -170,6 +193,11 @@ wss.on('connection', (ws, req) => {
             data.isReady.splice(indexBis, 1)
         }
 
+        if (data.currentGame.isInGame.length == 0) {
+            console.log("Game closed, no players left")
+            resetGame()
+        }
+
         console.log("disconnected ID:", disconnectedID)
         delete webSockets[disconnectedID]
         updateDatabase(data)
@@ -182,7 +210,7 @@ wss.on('connection', (ws, req) => {
             var sendID = messageCommand[messageCommand.length - 1]
             if (messageCommand[0] == "f") {
                 var pureCommand = messageCommand[1].split("(")[0]
-                if (authorizedCommands.includes(pureCommand) && sendID == data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))]) {
+                if (authorizedCommands.includes(pureCommand) && sendID == data.correspondingID[data.connectedIP.indexOf(getAdressIp(req))] || getAdressIp(req) == "::ffff:127.0.0.1" || getAdressIp(req) == "::1") {
                     eval(messageCommand[1])
                 }
             }
@@ -388,6 +416,9 @@ function resetGame() {
         data.usr[i].bet = 0
         data.usr[i].entryBet = 0
     }
+    var turn = 0
+    var currentlyPlayingPlayer = -1
+    var previousBet = 0
     data.currentGame.publicCards = []
     data.currentGame.totalBetAmount = 0
     data.currentGame.spectatorsID = []
@@ -402,6 +433,7 @@ function finishGame(winningID, gain) {
     for (var i = 0; i < data.usr.length; i++) {
         if (data.usr[i].id == winningID && data.currentGame.isInGame.includes(winningID)) {
             data.usr[i].bank += gain
+            console.log("after win :", data.usr[i].bank)
             resetGame()
             break
         }
@@ -415,25 +447,24 @@ function resetDatabase() {
     data.waitingForGame = []
 }
 
-var playingPlayers = []
 var turn = 0
 var currentlyPlayingPlayer = -1
 var previousBet = 0
 
 function startGame() {
-    playingPlayers = []
     console.log("Game started")
     data = readDatabase()
     console.log("players waiting :", data.waitingForGame)
     for (var j = 0; j < data.waitingForGame.length; j++) {
         for (var i = 0; i < data.usr.length; i++) {
             if (data.usr[i].id == data.waitingForGame[j]) {
-                playingPlayers.push(data.usr[i])
+                data.currentGame.isInGame.push(data.usr[i])
             }
         }
     }
-    playingPlayers = shuffle(playingPlayers)
-    sendGlobal("info__gameStartedWith::" + JSON.stringify(playingPlayers))
+    data.currentGame.isInGame = shuffle(data.currentGame.isInGame)
+    sendGlobal("info__gameStartedWith::" + JSON.stringify(data.currentGame.isInGame))
+    updateDatabase(data)
     data.isReady = []
     data.waitingForGame = []
     finishedMyTurn(0, 0)
@@ -461,6 +492,7 @@ function shuffle(a) {
 
 function finishedMyTurn(ID) {
     var data = readDatabase()
+    var turn = data.currentGame.turn
     if (ID != 0) {
         for (var i = 0; i < data.usr.length; i++) {
             if (data.usr[i].id == ID) {
@@ -474,12 +506,12 @@ function finishedMyTurn(ID) {
     }
     var updatedPlayingPlayers = []
     currentlyPlayingPlayer++
-    if (playingPlayers.length == 1) {
-        checkVictory(playingPlayers[0])
+    if (data.currentGame.isInGame.length == 1) {
+        checkVictory(data.currentGame.isInGame[0])
     }
-    for (var i = 0; i < playingPlayers.length; i++) {
+    for (var i = 0; i < data.currentGame.isInGame.length; i++) {
         for (var j = 0; j < data.usr.length; j++) {
-            if (data.usr[j].id == playingPlayers[i].id) {
+            if (data.usr[j].id == data.currentGame.isInGame[i].id) {
                 updatedPlayingPlayers.push(data.usr[j])
                 break
             }
@@ -488,11 +520,9 @@ function finishedMyTurn(ID) {
     if ((currentlyPlayingPlayer > 1 && turn == 0) || (updatedPlayingPlayers.length == 2 && currentlyPlayingPlayer == 1 && turn == 0)) {
         for (var i = 0; i < updatedPlayingPlayers.length; i++) {
             for (var j = 0; j < data.usr.length; j++) {
-                console.log("is ", data.usr[j].id, " is equal to ", updatedPlayingPlayers[i].id, "his hand:", data.usr[j].hand)
                 if (data.usr[j].id == updatedPlayingPlayers[i].id && data.usr[j].hand.length == 0) {
                     data.usr[j].hand.push(drawCard())
                     data.usr[j].hand.push(drawCard())
-                    console.log("player:", data.usr[j].id, "his cards:", data.usr[j].hand)
                     sendToSpecificUser(`info__yourCards::${JSON.stringify(data.usr[j].hand)}`, data.usr[j].id)
                     break
                 }
@@ -503,8 +533,9 @@ function finishedMyTurn(ID) {
     if (currentlyPlayingPlayer > updatedPlayingPlayers.length - 1 && updatedPlayingPlayers.every((val, i, arr) => val.bet === arr[0].bet)) {
         previousBet = 0
         currentlyPlayingPlayer = 0
-        turn++
-        sendGlobal(`cmd__updateTurns(${turn})`)
+        data.currentGame.turn = data.currentGame.turn + 1
+        updateDatabase(data)
+        sendGlobal(`cmd__updateTurns(${data.currentGame.turn})`)
         toggleNextStep(turn)
     }
     if (currentlyPlayingPlayer > updatedPlayingPlayers.length - 1) {
@@ -563,7 +594,7 @@ function toggleNextStep(turn) {
                     data.usr[i].bet = 0
                 }
             }
-            handleVictory(checkVictory(playingPlayers))
+            handleVictory(checkVictory(data.currentGame.isInGame))
             break
     }
 }
@@ -571,6 +602,7 @@ function toggleNextStep(turn) {
 function checkVictory(players) {
     if (players.length == 1) {
         sendGlobal(`info__playerHandValue::${players[0].id}::last`)
+        console.log(players[0])
         handleVictory(players[0])
         return
     }
@@ -592,13 +624,15 @@ function checkVictory(players) {
 
 function handleVictory(winningPlayer) {
     var data = readDatabase()
-    sendGlobal(`info__winningPlayer::${winningPlayer.id}::${data.currentGame.totalBetAmount}`)
+    sendGlobal(`info__winningPlayer::${winningPlayer.name}::${data.currentGame.totalBetAmount}`)
     for (var i = 0; i < data.usr.length; i++) {
         if (data.usr[i].id == winningPlayer.id) {
             data.usr[i].bank += parseInt(data.currentGame.totalBetAmount)
+            console.log("after win bis :", data.usr[i].bank)
             break
         }
     }
+    resetGame()
     updateDatabase(data)
     sendToSpecificUser(`info__youWon::${data.usr[i].bank}`, winningPlayer.id)
 }
@@ -632,6 +666,23 @@ function bet(ID, amount) {
     }
     updateDatabase(data)
     sendGlobal(`cmd__updateBets(${me.bet}, ${me.entryBet}, ${ID})`)
+}
+
+function wentBackToLobby(ID) {
+    var data = readDatabase()
+    for (var i = 0; i < data.currentGame.isInGame.length; i++) {
+        if (data.currentGame.isInGame[i].id == ID) {
+            var index = data.currentGame.isInGame.indexOf(data.currentGame.isInGame[i])
+            break
+        }
+    }
+    if (index != undefined) {
+        data.currentGame.isInGame.splice(index, 1)
+    }
+    if (data.currentGame.isInGame.length == 0) {
+        console.log("Game stopped, no players left")
+        resetGame()
+    }
 }
 
 resetGame()
