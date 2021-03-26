@@ -3,7 +3,7 @@ var ws = new WebSocket(HOST);
 var el;
 var myID;
 var myName = ""
-var cardCounter = 0
+var cardCounter = 1
 
 ws.onmessage = function(event) {
     messageHandler(event.data)
