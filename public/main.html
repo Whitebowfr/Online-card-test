@@ -482,6 +482,7 @@
     function handleCoucher() {
         document.getElementById("playerCard1").style.backgroundPosition = "0px"
         document.getElementById("playerCard2").style.backgroundPosition = "0px"
+        send(`f__couched(${myID})__${myID}`)
     }
 
     function doTapis() {

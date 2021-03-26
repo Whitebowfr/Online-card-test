@@ -19,7 +19,7 @@ var clientsReady = 0
 const currentServerID = Math.round(Math.random() * 10000000)
 data.waitingForGame = []
 updateDatabase(data)
-const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady", "sendToSpecificUser", "console.log", "finishedMyTurn", "wentBackToLobby"]
+const authorizedCommands = ["drawCard", "resetGame", "bet", "getMyCards", "connectToGame", "isReady", "sendToSpecificUser", "console.log", "finishedMyTurn", "wentBackToLobby", "couched"]
 
 resetDatabase()
 
@@ -476,6 +476,9 @@ function combineBets(playerPlayers) {
     for (var i = 0; i < playerPlayers; i++) {
         data.currentGame.totalBetAmount += parseInt(playerPlayers[i].bet)
     }
+    for (var i = 0; i < data.usr.length; i++) {
+        data.usr[i].bet = 0
+    }
     updateDatabase(data)
 }
 
@@ -530,7 +533,7 @@ function finishedMyTurn(ID) {
         }
     }
     updateDatabase(data)
-    if (currentlyPlayingPlayer > updatedPlayingPlayers.length - 1 && updatedPlayingPlayers.every((val, i, arr) => val.bet === arr[0].bet)) {
+    if (currentlyPlayingPlayer > updatedPlayingPlayers.length - 1 && updatedPlayingPlayers.every((val, i, arr) => (val.bet === arr[0].bet || val.bet == 0))) {
         previousBet = 0
         currentlyPlayingPlayer = 0
         data.currentGame.turn = data.currentGame.turn + 1
@@ -614,7 +617,7 @@ function checkVictory(players) {
             if (data.usr[j].id == players[i].id) {
                 playersToCheck.push(convertHandToExploitable(data.usr[j].hand))
                 playersToCheckID.push(data.usr[j])
-                sendGlobal(`info__playerHandValue::${data.usr[j].id}::${Hand.solve(convertHandToExploitable(data.usr[j].hand)).descr}`)
+                sendGlobal(`info__playerHandValue::${data.usr[j].id}::${JSON.stringify(Hand.solve(convertHandToExploitable(data.usr[j].hand)).descr)}`)
                 break
             }
         }
@@ -683,6 +686,19 @@ function wentBackToLobby(ID) {
         console.log("Game stopped, no players left")
         resetGame()
     }
+}
+
+function couched(ID) {
+    var data = readDatabase()
+    for (var i = 0; i < data.currentGame.isInGame.length; i++) {
+        if (data.currentGame.isInGame[i].id == ID) {
+            const index = data.currentGame.isInGame.indexOf(data.currentGame.isInGame[i]);
+            if (index > -1) {
+                data.currentGame.isInGame.splice(index, 1);
+            }
+        }
+    }
+    updateDatabase(data)
 }
 
 resetGame()
